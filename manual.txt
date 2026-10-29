@@ -185,6 +185,7 @@ URLs públicas:
 - Landing: https://wavizo-bot.github.io/Horizonte-de-cuidado/
 - Repositório: https://github.com/wavizo-bot/Horizonte-de-cuidado
 - Pages: main, pasta /docs.
+- Publicado no commit fa98248, tag v1.0.0.0.
 
 11. ASSETS DE LOJA
 ------------------
@@ -255,15 +256,14 @@ Servidores locais:
 
 16. PENDÊNCIAS
 --------------
-1. Confirmar conta GitHub e nome do repositório; publicar Pages em main/docs.
-2. Testar login Google/Drive de ponta a ponta com uma conta autorizada; a tela
+1. Testar login Google/Drive de ponta a ponta com uma conta autorizada; a tela
    de consentimento do cliente já foi validada.
-3. Revisar textos legais com o responsável antes da publicação.
-4. Enviar o MSIX final ao Partner Center e concluir a listagem da Store.
-5. Manter docs/app/ gerado do mesmo commit da landing e testar /app/ antes de
+2. Revisar textos legais com o responsável.
+3. Enviar o MSIX final ao Partner Center e concluir a listagem da Store.
+4. Manter docs/app/ gerado do mesmo commit da landing e testar /app/ antes de
    cada publicação; a versão web é demonstrativa e não acessa o Drive.
-6. Registrar commit/tag no log.txt após a publicação.
-7. Opcional: renomear a pasta de trabalho de "teste" para
+5. Rodar pnpm check:privacy antes de cada commit público.
+6. Opcional: renomear a pasta de trabalho de "teste" para
    "horizonte-de-cuidado"; os scripts usam o diretório atual.
 
 17. CONTATO
