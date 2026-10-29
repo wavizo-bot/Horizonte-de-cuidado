@@ -1,0 +1,520 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Horizonte de Cuidado — agenda e filas para saúde mental</title>
+  <meta name="description" content="Organize encaminhamentos, matriciamento, grupos e atendimentos individuais em uma agenda de 90 dias. Ferramenta independente para equipes de saúde mental.">
+  <meta name="theme-color" content="#174A3A">
+  <meta name="author" content="Horizonte de Cuidado">
+  <link rel="canonical" href="https://wavizo-bot.github.io/Horizonte-de-cuidado/">
+  <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="assets/store-logo-300.png">
+  <link rel="preload" href="assets/fonts/DMSerifDisplay-Regular.ttf" as="font" type="font/ttf" crossorigin>
+  <link rel="preload" href="assets/fonts/SourceSans3-Regular.ttf" as="font" type="font/ttf" crossorigin>
+  <link rel="stylesheet" href="site.css">
+
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="pt_BR">
+  <meta property="og:site_name" content="Horizonte de Cuidado">
+  <meta property="og:title" content="Horizonte de Cuidado — agenda e filas para saúde mental">
+  <meta property="og:description" content="Encaminhamentos, matriciamento, grupos e atendimentos individuais em uma agenda viva de 90 dias. Apoio à organização do cuidado, não prontuário.">
+  <meta property="og:url" content="https://wavizo-bot.github.io/Horizonte-de-cuidado/">
+  <meta property="og:image" content="https://wavizo-bot.github.io/Horizonte-de-cuidado/assets/og-horizonte.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Horizonte de Cuidado: agenda, filas e comunicação para a saúde mental.">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Horizonte de Cuidado — agenda e filas para saúde mental">
+  <meta name="twitter:description" content="Encaminhamentos, matriciamento, grupos e atendimentos individuais em uma agenda viva de 90 dias.">
+  <meta name="twitter:image" content="https://wavizo-bot.github.io/Horizonte-de-cuidado/assets/og-horizonte.png">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Horizonte de Cuidado",
+    "applicationCategory": "HealthApplication",
+    "operatingSystem": "Windows 10, Windows 11",
+    "softwareVersion": "1.0.0",
+    "description": "Ferramenta independente de organização de encaminhamentos, filas, agenda e comunicação para equipes de saúde mental.",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "BRL" },
+    "url": "https://wavizo-bot.github.io/Horizonte-de-cuidado/"
+  }
+  </script>
+</head>
+<body>
+  <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+
+  <header class="site-header">
+    <div class="site-header__inner">
+      <a class="brand" href="./" aria-label="Horizonte de Cuidado — início">
+        <svg viewBox="0 0 56 56" aria-hidden="true">
+          <circle cx="28" cy="22" r="8" fill="#174A3A"/>
+          <path d="M5 37c6-7 12-7 18 0s12 7 18 0 9-4 10-2" fill="none" stroke="#174A3A" stroke-width="3.2" stroke-linecap="round"/>
+          <path d="M7 46c6-5 11-5 17 0s11 5 17 0 8-3 9-2" fill="none" stroke="#B9684E" stroke-width="2.4" stroke-linecap="round" opacity=".85"/>
+        </svg>
+        <span><strong>Horizonte</strong><small>de Cuidado</small></span>
+      </a>
+      <nav class="site-nav" aria-label="Navegação principal">
+        <a class="site-nav__keep" href="#por-dentro">Telas</a>
+        <a href="#como-funciona">Como calcula</a>
+        <a href="#privacidade">Privacidade</a>
+        <a class="site-nav__keep" href="#perguntas">Perguntas</a>
+        <a class="button button--small site-nav__keep" href="#download">Baixar</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="conteudo">
+    <section class="hero">
+      <div class="hero__inner">
+        <div>
+          <p class="eyebrow">Apoio à organização do cuidado em saúde mental</p>
+          <h1>O cuidado inteiro, num só horizonte.</h1>
+          <p class="hero__lead">
+            Encaminhamentos, matriciamento, grupos, atendimentos individuais e busca ativa em uma
+            agenda viva de 90 dias — feita para equipes que precisam enxergar o cuidado sem
+            transformar pessoas em números.
+          </p>
+          <div class="hero__actions">
+            <a class="button" href="#download">Baixar para Windows</a>
+            <a class="button button--ghost" href="#por-dentro">Ver as telas</a>
+          </div>
+          <p class="hero__note">Windows 10/11 · MSIX · dados no seu dispositivo · nuvem opcional</p>
+        </div>
+        <div class="hero__shot">
+          <img src="assets/screens/tela-hoje.webp" width="1366" height="768" alt="Tela Hoje do Horizonte de Cuidado com agenda do dia, prioridades da fila e lembretes, usando dados fictícios.">
+          <span class="hero__badge"><span></span> Demonstração com dados fictícios</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--paper" id="o-que-e">
+      <div class="section__inner">
+        <div class="section__head">
+          <p class="eyebrow">O que é</p>
+          <h2>Um caderno de trabalho para a equipe, não mais uma planilha solta.</h2>
+          <p>
+            O Horizonte de Cuidado reúne o fluxo de encaminhamentos, a fila de matriciamento, os
+            grupos e os atendimentos individuais em um só lugar. A agenda nasce dos dias e das vagas
+            que a própria equipe configura — e mostra o que não coube, em vez de esconder.
+          </p>
+        </div>
+        <div class="grid grid--3">
+          <article class="card">
+            <span class="card__icon" aria-hidden="true">≡</span>
+            <h3>Filas que mostram o tempo</h3>
+            <p>Prioridade, data de encaminhamento e espera aparecem juntas. O próximo matriciamento é sugerido, mas a equipe decide.</p>
+          </article>
+          <article class="card">
+            <span class="card__icon" aria-hidden="true">□</span>
+            <h3>Agenda que respeita a semana real</h3>
+            <p>Dias de atendimento, vagas por tipo, feriados, capacidade especial e encaixes manuais preservados no replanejamento.</p>
+          </article>
+          <article class="card">
+            <span class="card__icon" aria-hidden="true">◌</span>
+            <h3>Contato sem perder o fio</h3>
+            <p>Texto pronto para WhatsApp, marcação de paciente sem WhatsApp e registro de cada tentativa com canal e resultado.</p>
+          </article>
+          <article class="card">
+            <span class="card__icon" aria-hidden="true">↗</span>
+            <h3>Planejamento de 90 dias</h3>
+            <p>Uma visão de continuidade para grupos e indivíduos, com o que está sem vaga visível para a coordenação agir.</p>
+          </article>
+          <article class="card">
+            <span class="card__icon" aria-hidden="true">▥</span>
+            <h3>Relatórios para a reunião</h3>
+            <p>Pacientes por modelo de cuidado, próximas datas, encaminhados sem matriciamento e ocupação dos grupos.</p>
+          </article>
+          <article class="card">
+            <span class="card__icon" aria-hidden="true">◇</span>
+            <h3>Privacidade por padrão</h3>
+            <p>Sem servidor próprio, anúncios ou analytics. Armazenamento local cifrado e backup opcional na sua conta Google.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="por-dentro">
+      <div class="section__inner">
+        <div class="section__head">
+          <p class="eyebrow">Por dentro</p>
+          <h2>O fluxo real, tela por tela.</h2>
+          <p>
+            Capturas reais do aplicativo com dados fictícios. Cada tela foi pensada para uma decisão
+            operacional: o que acontece hoje, quem espera, onde há vaga e o que precisa de contato.
+          </p>
+        </div>
+        <div class="shots-grid">
+          <figure class="shot">
+            <img src="assets/screens/tela-hoje.webp" width="1366" height="768" alt="Tela Hoje com saudação, cinco atendimentos do dia, quatro pessoas aguardando matriciamento e lembretes da equipe.">
+            <figcaption><strong>Hoje</strong> O dia começa com os atendimentos, as prioridades da fila e os lembretes que não podem passar.</figcaption>
+          </figure>
+          <figure class="shot">
+            <img src="assets/screens/tela-agenda.webp" width="1366" height="768" alt="Agenda semanal com colunas de segunda a domingo, atendimentos por horário e capacidade de cada dia.">
+            <figcaption><strong>Agenda</strong> Semana, dia e mês. A capacidade de cada tipo de vaga aparece antes de o encaixe ser feito.</figcaption>
+          </figure>
+          <figure class="shot">
+            <img src="assets/screens/tela-pacientes.webp" width="1366" height="768" alt="Lista de pacientes com cadastro, modelo de cuidado, situação, próximo atendimento e contato.">
+            <figcaption><strong>Pacientes</strong> Cadastro enxuto, busca por nome, cadastro, telefone ou motivo, e filtros por modelo e situação.</figcaption>
+          </figure>
+          <figure class="shot">
+            <img src="assets/screens/tela-filas.webp" width="1366" height="768" alt="Fila de matriciamento ordenada por prioridade e tempo de espera, com painel de pendências e ocupação dos grupos.">
+            <figcaption><strong>Filas e prioridades</strong> Prioridade não é só uma etiqueta: ela muda a ordem da fila e a próxima vaga sugerida.</figcaption>
+          </figure>
+          <figure class="shot">
+            <img src="assets/screens/tela-grupos.webp" width="1366" height="768" alt="Cartões de grupos com frequência, próximo encontro, participantes, capacidade e encontros em 90 dias.">
+            <figcaption><strong>Grupos e atividades</strong> Recorrência semanal, quinzenal ou mensal vira agenda para cada participante ativo.</figcaption>
+          </figure>
+          <figure class="shot">
+            <img src="assets/screens/tela-relatorios.webp" width="1366" height="768" alt="Relatório com pacientes por modelo de cuidado, próximas datas, ocupação e planejamento de 90 dias.">
+            <figcaption><strong>Relatórios</strong> A visão que a reunião de equipe precisa: quem está em cada modelo, quando volta e quem ficou sem vaga.</figcaption>
+          </figure>
+          <figure class="shot">
+            <img src="assets/screens/tela-mensagens.webp" width="1366" height="768" alt="Tela de mensagens com modelo de texto para WhatsApp, prévia da mensagem e histórico de contato.">
+            <figcaption><strong>Mensagens</strong> Texto pronto, envio humano. O app abre o WhatsApp; o registro guarda canal, resultado e observação.</figcaption>
+          </figure>
+          <figure class="shot">
+            <img src="assets/screens/tela-ajustes.webp" width="1366" height="768" alt="Ajustes de agenda e capacidade com dias de atendimento, vagas por tipo e exceções de calendário.">
+            <figcaption><strong>Ajustes</strong> A regra é da equipe: dias, vagas, modelos de cuidado, mensagens e exceções ficam configuráveis.</figcaption>
+          </figure>
+        </div>
+
+        <div class="mobile-band">
+          <div class="mobile-band__phone">
+            <img src="assets/screens/tela-celular-hoje.webp" width="390" height="844" alt="Versão móvel da tela Hoje, com menu, saudação e cartões de resumo.">
+          </div>
+          <div>
+            <p class="eyebrow">Também no celular</p>
+            <h3>A mesma visão, em uma tela menor.</h3>
+            <p>A interface é responsiva e mantém o essencial à mão quando você está em trânsito ou entre atendimentos.</p>
+            <ul>
+              <li>Menu compacto e navegação por toque.</li>
+              <li>Cartões de resumo e lista de pacientes adaptados.</li>
+              <li>O pacote principal é Windows/MSIX; a versão web serve para demonstração.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--green" id="como-funciona">
+      <div class="section__inner">
+        <div class="section__head">
+          <p class="eyebrow">Como o cálculo funciona</p>
+          <h2>Uma regra explicável, não uma caixa-preta.</h2>
+          <p>
+            O planejamento é determinístico: as mesmas entradas produzem a mesma sugestão. Você
+            consegue explicar por que uma pessoa ficou em determinada data — e corrigir a regra
+            quando a realidade mudar.
+          </p>
+        </div>
+        <div class="formula">
+          <div class="formula__box">
+            <p class="eyebrow" style="color:var(--clay)">A ideia em uma frase</p>
+            <div class="formula__line">
+              Para cada tipo de vaga, o app procura o primeiro dia útil com capacidade livre,
+              respeitando prioridade, data de encaminhamento ou triagem, recorrência do grupo e
+              exceções do calendário.
+            </div>
+            <p>
+              Atendimentos manuais, fixos, concluídos ou faltas ficam preservados. Se não houver
+              vaga dentro do horizonte, a pessoa aparece em <strong>“sem vaga”</strong> — não é
+              descartada nem escondida.
+            </p>
+            <p style="margin-bottom:0">
+              O resultado é uma <strong>sugestão operacional</strong>. A decisão clínica, a avaliação
+              de risco e a prioridade final continuam sendo da equipe profissional.
+            </p>
+          </div>
+          <ul class="formula__inputs">
+            <li><b>1</b><span><strong>Dias de funcionamento</strong>A semana real da equipe, com dias fechados e exceções.</span></li>
+            <li><b>2</b><span><strong>Vagas por tipo</strong>Matriciamento, individual, grupo, coletivo e reposição, por dia.</span></li>
+            <li><b>3</b><span><strong>Prioridade e datas</strong>Critérios definidos pela equipe, data de encaminhamento e triagem.</span></li>
+            <li><b>4</b><span><strong>Grupos e recorrência</strong>Semanal, quinzenal ou mensal, com âncora e capacidade de participantes.</span></li>
+            <li><b>5</b><span><strong>Exceções</strong>Feriados, reuniões, capacidade reduzida ou ampliada em um dia específico.</span></li>
+            <li><b>6</b><span><strong>Encaixes manuais</strong>O que a equipe marcou à mão não é sobrescrito pelo replanejamento.</span></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--paper" id="nao-e">
+      <div class="section__inner">
+        <div class="section__head">
+          <p class="eyebrow">Limites claros</p>
+          <h2>O que ele não é.</h2>
+          <p>
+            A ferramenta organiza o cuidado; ela não substitui o cuidado. Estes limites são parte do
+            produto, não uma nota de rodapé.
+          </p>
+        </div>
+        <ul class="not-list">
+          <li>Não é prontuário eletrônico nem registro clínico oficial.</li>
+          <li>Não é sistema oficial do SUS, de secretaria, conselho ou instituição de saúde.</li>
+          <li>Não é dispositivo médico e não foi validado para diagnóstico automatizado.</li>
+          <li>Não decide diagnóstico, prescrição, internação, risco ou conduta terapêutica.</li>
+          <li>Não envia mensagens automaticamente; apenas prepara o texto e abre o WhatsApp.</li>
+          <li>Não é canal de emergência e não monitora pacientes em tempo real.</li>
+          <li>Não garante vaga, atendimento ou cumprimento da agenda planejada.</li>
+          <li>Não substitui escuta, exame, supervisão, protocolo ou julgamento profissional.</li>
+        </ul>
+        <div class="card" style="margin-top:22px;border-color:#e4c8bc;background:var(--clay-soft)">
+          <p><strong>Em emergência, não use este aplicativo para pedir ajuda.</strong> Acione o SAMU (192), o serviço de emergência local, o CAPS/CAPS AD de referência ou a rede de proteção.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="requisitos">
+      <div class="section__inner">
+        <div class="section__head">
+          <p class="eyebrow">Compatibilidade</p>
+          <h2>O que você precisa para usar.</h2>
+          <p>O pacote principal é Windows/MSIX. A interface também se adapta a telas menores, mas a nuvem é uma função do host Windows.</p>
+        </div>
+        <div class="req-grid">
+          <article class="req-card">
+            <h3>Requisitos</h3>
+            <ul>
+              <li>Windows 10 versão 1809 (build 17763) ou superior, ou Windows 11.</li>
+              <li>Processador x64.</li>
+              <li>Microsoft Edge WebView2 Runtime (incluído no Windows 11; instalável no Windows 10).</li>
+              <li>Cerca de 1 MB para o pacote de demonstração; os dados ocupam espaço adicional.</li>
+              <li>Conta Google opcional para backup no Drive.</li>
+            </ul>
+          </article>
+          <article class="req-card req-card--warn">
+            <h3>Limitações conhecidas</h3>
+            <ul>
+              <li>As funções locais funcionam offline; a nuvem depende de internet e do host Windows.</li>
+              <li>A versão web não acessa o Google Drive.</li>
+              <li>Limpar o armazenamento do navegador ou do pacote pode apagar os dados locais.</li>
+              <li>A chave de cifragem local fica no mesmo dispositivo; proteja o acesso ao perfil.</li>
+              <li>O backup no Drive não tem criptografia adicional do aplicativo nesta versão.</li>
+              <li>A importação de planilhas tolera formatos inconsistentes, mas não corrige todos os erros de origem.</li>
+              <li>O WhatsApp é aberto por link; o app não confirma entrega ou leitura.</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--sage" id="privacidade">
+      <div class="section__inner">
+        <div class="privacy-grid">
+          <div>
+            <p class="eyebrow">Privacidade e Limited Use</p>
+            <h2>Seus dados ficam com você.</h2>
+            <p>
+              O aplicativo não tem servidor próprio, não vende dados, não exibe anúncios e não usa
+              ferramentas de analytics. O caderno fica no dispositivo, cifrado com AES-GCM. O backup
+              no Google Drive é opcional e usa a pasta privada <code>appDataFolder</code> da sua conta.
+            </p>
+            <p>
+              O acesso ao Drive é limitado ao escopo <code>drive.appdata</code>. O app não lê os demais
+              arquivos, não compartilha arquivos e não usa o conteúdo para publicidade. O token do
+              Windows fica protegido por DPAPI. O usuário pode desconectar a conta a qualquer momento.
+            </p>
+            <p class="limited-use">
+              <strong>Google API Services — Limited Use.</strong> O uso de informações recebidas das
+              APIs do Google obedece à Google API Services User Data Policy, incluindo os requisitos de
+              Limited Use. Os dados são usados somente para fornecer o backup e a sincronização do
+              caderno; não são vendidos, não são usados para anúncios e não são lidos por pessoas,
+              exceto por necessidade de segurança, cumprimento de lei ou consentimento explícito.
+            </p>
+            <p style="margin-top:18px">
+              Leia a <a href="politica-de-privacidade.html">Política de Privacidade</a> completa para
+              saber quais dados são tratados, por quanto tempo e como exercer direitos LGPD/GDPR.
+            </p>
+          </div>
+          <aside class="privacy-panel">
+            <h3>Quando você conecta o Drive</h3>
+            <ul>
+              <li>O app cria arquivos de backup na pasta privada do aplicativo.</li>
+              <li>O conteúdo é enviado por HTTPS para a sua própria conta Google.</li>
+              <li>Nesta versão, o payload não recebe criptografia adicional do app.</li>
+              <li>Desconectar interrompe novos envios, mas não apaga arquivos já enviados.</li>
+              <li>O desenvolvedor não tem acesso aos arquivos e não pode apagá-los remotamente.</li>
+              <li>Para apagar a nuvem, use a ação explícita de reinício do caderno ou remova os arquivos na conta Google.</li>
+            </ul>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="documentos">
+      <div class="section__inner">
+        <div class="section__head">
+          <p class="eyebrow">Documentos</p>
+          <h2>Transparência para usar com segurança.</h2>
+          <p>Os documentos são públicos, sem login, e valem para a versão 1.0.0 do aplicativo.</p>
+        </div>
+        <div class="docs-grid">
+          <a class="doc-card" href="politica-de-privacidade.html">
+            <strong>Política de Privacidade</strong>
+            <span>Dados coletados, armazenamento, Google Drive, retenção, LGPD/GDPR e contato.</span>
+          </a>
+          <a class="doc-card" href="termos-de-servico.html">
+            <strong>Termos de Serviço</strong>
+            <span>Licença, demonstração, uso permitido e proibido, propriedade intelectual e limites.</span>
+          </a>
+          <a class="doc-card" href="aviso-legal.html">
+            <strong>Aviso Legal</strong>
+            <span>Limites por função, uso indevido, emergência e responsabilidade profissional.</span>
+          </a>
+        </div>
+        <p style="margin-top:16px;font-size:.86rem;color:var(--muted)">
+          Precisa de ajuda com instalação, backup ou importação? Consulte a
+          <a href="suporte.html">página de suporte</a>.
+        </p>
+      </div>
+    </section>
+
+    <section class="section section--paper" id="perguntas">
+      <div class="section__inner">
+        <div class="section__head">
+          <p class="eyebrow">Perguntas frequentes</p>
+          <h2>Dúvidas antes de começar.</h2>
+        </div>
+        <div class="faq">
+          <details>
+            <summary>Preciso de internet para usar?</summary>
+            <p>Não para as funções locais. Cadastro, agenda, filas, grupos, mensagens e relatórios funcionam offline. A nuvem e o backup no Google Drive dependem de internet e do aplicativo Windows instalado.</p>
+          </details>
+          <details>
+            <summary>O aplicativo envia mensagens pelo WhatsApp sozinho?</summary>
+            <p>Não. Ele prepara o texto e abre o WhatsApp com a mensagem. O envio continua sendo um ato humano. O histórico registra canal, resultado e observação, sem copiar a conversa.</p>
+          </details>
+          <details>
+            <summary>Onde ficam os dados?</summary>
+            <p>No armazenamento local do dispositivo, cifrados com AES-GCM. Se você conectar uma conta Google, o app também envia backups para a pasta privada <code>appDataFolder</code> do seu Drive. Não há servidor próprio do projeto.</p>
+          </details>
+          <details>
+            <summary>É um prontuário eletrônico?</summary>
+            <p>Não. É uma ferramenta de organização de encaminhamentos, filas, agenda e comunicação. Não substitui o prontuário, o registro clínico oficial, o protocolo da instituição ou o julgamento profissional.</p>
+          </details>
+          <details>
+            <summary>Como a prioridade funciona?</summary>
+            <p>A fila de matriciamento ordena primeiro os pacientes marcados como prioritários e, depois, pela data de encaminhamento. A próxima vaga de triagem é sugerida respeitando essa ordem e a capacidade configurada. A equipe decide os critérios e pode ajustar o caso.</p>
+          </details>
+          <details>
+            <summary>Posso importar minha planilha de encaminhamentos?</summary>
+            <p>Sim. O importador aceita as colunas A–J da planilha (nome, cadastro, idade, telefone, data, motivo, equipe, triagem, modelo e observações) e mostra um resumo para conferência. Nomes, telefones e datas devem ser revisados antes de usar. Dados reais nunca são publicados no repositório.</p>
+          </details>
+          <details>
+            <summary>Qual a diferença entre grupo e atividade coletiva?</summary>
+            <p>Os dois têm recorrência e entram na agenda. O grupo tem participantes vinculados e limite de capacidade; a atividade coletiva pode ser aberta e serve para oficinas, rodas ou ações comunitárias.</p>
+          </details>
+          <details>
+            <summary>Como instalo o aplicativo no Windows?</summary>
+            <p>Baixe o pacote <code>.msix</code> e o certificado público <code>.cer</code> da mesma versão. O certificado de teste precisa ser confiável no computador; em muitos ambientes isso exige administrador. Depois, abra o <code>.msix</code>. Em produção, a Microsoft Store reassina o pacote.</p>
+          </details>
+          <details>
+            <summary>Posso usar em mais de um computador?</summary>
+            <p>Sim, com o backup opcional no Google Drive. Cada dispositivo envia operações separadas; edições concorrentes são preservadas para decisão do usuário, em vez de sobrescrever uma à outra. Sem nuvem, use exportação/importação JSON.</p>
+          </details>
+          <details>
+            <summary>O que acontece se eu limpar o navegador?</summary>
+            <p>Na versão web, o caderno fica no <code>localStorage</code> e pode ser apagado ao limpar dados do site, usar navegação privada ou trocar de perfil. Exporte um JSON ou use o backup no Drive antes. Sem backup, não é possível recuperar o conteúdo local.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="english">
+      <div class="section__inner english">
+        <div>
+          <p class="eyebrow">English</p>
+          <h2>About this project.</h2>
+        </div>
+        <div>
+          <p>
+            Horizonte de Cuidado is a Windows/MSIX organizer for mental-health teams. It brings
+            referrals, triage queues, recurring groups, individual appointments, WhatsApp-ready
+            messages and 90-day planning into one place. It is an independent support tool — not an
+            electronic health record, official government system or medical device. Patient data
+            stays on the device, encrypted locally; Google Drive backup is optional and uses the
+            user's own account with the <code>drive.appdata</code> scope. Clinical decisions always
+            remain with qualified professionals.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="download" id="download">
+      <div class="download__inner">
+        <div>
+          <p class="eyebrow" style="color:var(--sand)">Demonstração para Windows</p>
+          <h2>Leve o Horizonte para a sua equipe.</h2>
+          <p>
+            Pacote MSIX 1.0.0.0 para Windows x64, com dados fictícios de demonstração. O backup
+            opcional no Google Drive usa a conta do próprio usuário, com escopo mínimo e consentimento
+            explícito; todas as funções locais continuam disponíveis sem login.
+          </p>
+          <div class="download__meta">
+            <span>MSIX · x64</span>
+            <span>≈ 1 MB</span>
+            <span>Windows 10 1809+</span>
+            <span>Versão 1.0.0.0</span>
+          </div>
+        </div>
+        <div class="download__card">
+          <h3>Instalar em 3 passos</h3>
+          <ol>
+            <li>Baixe o <code>.msix</code> e o certificado público <code>.cer</code>.</li>
+            <li>Confie no certificado de teste (pode exigir administrador).</li>
+            <li>Abra o <code>.msix</code> e conclua a instalação.</li>
+          </ol>
+          <div class="download__actions">
+            <a class="button" href="downloads/HorizonteDeCuidado_1.0.0.0_x64.msix">Baixar MSIX</a>
+            <a class="button button--ghost" href="downloads/HorizonteDeCuidado-dev.cer">Baixar certificado</a>
+            <a class="button button--ghost" href="app/">Testar no navegador</a>
+            <a class="button button--ghost" href="https://github.com/wavizo-bot/Horizonte-de-cuidado">Ver no GitHub</a>
+          </div>
+          <p class="download__note">
+            A demonstração web usa dados fictícios e não acessa o Google Drive; o pacote Windows é a
+            versão completa para uso local com backup opcional. Certificado de teste, uso local: a
+            Microsoft Store reassina o pacote em produção. Não instale certificados de origem
+            desconhecida. Em ambiente institucional, prefira Intune/GPO ou a Store.
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="site-footer__inner">
+      <div>
+        <h3>Horizonte de Cuidado</h3>
+        <p>Agenda, filas e comunicação para equipes de saúde mental. Ferramenta independente de apoio à organização do cuidado.</p>
+        <p style="margin-top:10px"><a href="mailto:mmr05@hotmail.com">mmr05@hotmail.com</a> · <a href="tel:+5511978831938">(11) 97883-1938</a></p>
+      </div>
+      <div>
+        <h3>Produto</h3>
+        <ul>
+          <li><a href="#o-que-e">O que é</a></li>
+          <li><a href="#por-dentro">Por dentro</a></li>
+          <li><a href="#como-funciona">Como o cálculo funciona</a></li>
+          <li><a href="#requisitos">Requisitos e limites</a></li>
+          <li><a href="#perguntas">Perguntas frequentes</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>Documentos</h3>
+        <ul>
+          <li><a href="politica-de-privacidade.html">Política de Privacidade</a></li>
+          <li><a href="termos-de-servico.html">Termos de Serviço</a></li>
+          <li><a href="aviso-legal.html">Aviso Legal</a></li>
+          <li><a href="suporte.html">Suporte</a></li>
+          <li><a href="https://github.com/wavizo-bot/Horizonte-de-cuidado">Repositório</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="site-footer__bottom">
+      <span>© 2026 Horizonte de Cuidado · versão 1.0.0 · atualizado em 29/10/2026</span>
+      <span>Projeto independente. Não é prontuário, sistema oficial ou dispositivo médico.</span>
+    </div>
+  </footer>
+</body>
+</html>

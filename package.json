@@ -1,0 +1,38 @@
+{
+  "name": "horizonte-de-cuidado",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Horizonte de Cuidado - agenda, filas e comunicacao para acompanhamento em saude mental",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "node tools/sync-legal.mjs && tsc --noEmit && vite build && node tools/build-app-docs.mjs",
+    "legal": "node tools/sync-legal.mjs",
+    "preview": "vite preview --host 127.0.0.1",
+    "check": "tsc --noEmit",
+    "check:privacy": "node tools/check-privacy.mjs",
+    "test": "vitest run",
+    "import-sheet": "node tools/import-sheet.mjs",
+    "assets": "node tools/make-assets.mjs",
+    "screens": "node tools/make-screenshots.mjs",
+    "docs": "node tools/serve-docs.mjs"
+  },
+  "dependencies": {
+    "react": "^19.2.1",
+    "react-dom": "^19.2.1"
+  },
+  "devDependencies": {
+    "@types/node": "^24.7.0",
+    "@types/react": "^19.2.1",
+    "@types/react-dom": "^19.2.1",
+    "@vitejs/plugin-react": "^5.0.4",
+    "playwright-core": "^1.55.0",
+    "sharp": "^0.34.3",
+    "typescript": "5.6.3",
+    "vite": "^7.1.7",
+    "vitest": "^2.1.4"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": ["esbuild", "sharp"]
+  }
+}

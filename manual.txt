@@ -1,0 +1,272 @@
+HORIZONTE DE CUIDADO — MANUAL DE RETOMADA
+=========================================
+Atualizado em: 29/10/2026
+Versão do aplicativo: 1.0.0.0
+Status: demonstração local pronta; identidade de loja e OAuth pendentes.
+
+1. O QUE É
+----------
+Aplicativo Windows/MSIX para equipes de saúde mental organizarem:
+- encaminhamentos e fila de matriciamento/triagem;
+- atendimentos individuais recorrentes ou pontuais;
+- grupos e atividades coletivas com recorrência;
+- agenda de até 90 dias com capacidade por tipo de vaga;
+- faltas, reposições, lembretes e busca ativa;
+- mensagens prontas para WhatsApp (envio sempre humano);
+- relatórios operacionais e planejamento de continuidade.
+
+O aplicativo NÃO é prontuário eletrônico, sistema oficial do SUS, dispositivo
+médico ou canal de emergência. Não decide diagnóstico, prescrição, risco ou
+internação. As sugestões de agenda são apoio administrativo; a decisão final é
+sempre da equipe profissional.
+
+2. NOME E IDENTIDADE
+--------------------
+Nome final escolhido pelo usuário: Horizonte de Cuidado.
+Sugestões apresentadas: Horizonte de Cuidado, Fila Viva, Cuidado em Rede,
+Agenda Acolhe e Ponte do Cuidado.
+
+Identidade reservada no Microsoft Partner Center:
+- Nome do pacote: wavizo.Horizontedecuidado
+- Publisher: CN=57BB464E-553F-45B6-A4ED-B253157408EB
+- Publisher display name: wavizo
+- Package Family Name: wavizo.Horizontedecuidado_c5p81jb0en0bm
+- Package SID: S-1-15-2-2436126619-3688890967-1744903539-3021524084-939996415-1921275128-3282777485
+- Store ID: 9NFVH4GZLNJF
+- Versão: 1.0.0.0
+- Aplicativo: HorizonteDeCuidado
+- Executável: HorizonteDeCuidado.exe
+
+O nome do pacote no AppxManifest.xml usa a grafia exata fornecida pelo Partner
+Center. A pasta de trabalho ainda pode ser renomeada de "teste" para
+"horizonte-de-cuidado" sem alterar os scripts, que usam o diretório atual.
+
+3. STACK E ARQUITETURA
+----------------------
+- Interface: React 19 + TypeScript + Vite 7, CSS próprio.
+- Host Windows: C# WinForms + WebView2, compilado com .NET Framework 4.8 csc.
+- Empacotamento: MSIX x64 com makeappx/signtool do Windows SDK.
+- Dados locais: localStorage cifrado com AES-GCM 256; chave no mesmo
+  localStorage (limitação documentada).
+- Nuvem: Google Drive appDataFolder, OAuth Desktop com PKCE e loopback,
+  token protegido por DPAPI no host Windows.
+- Sincronização: op-log por dispositivo, lamport, baseVersion, geração de
+  reinício, conflitos preservados para decisão do usuário, polling de 15 s.
+- Sem servidor próprio, sem analytics, sem anúncios.
+
+4. ESTRUTURA DE PASTAS
+----------------------
+Raiz:
+- src/                 código React/TypeScript
+  - components/        componentes visuais e modais
+  - views/             telas Hoje, Agenda, Pacientes, Filas, Grupos, Mensagens,
+                       Relatórios, Ajustes, Ficha e Formulário
+  - lib/               tipos, datas, agenda, importação, armazenamento, sync
+  - state/             store React e orquestração da nuvem
+  - data/              pacientes fictícios da demonstração
+  - assets/fonts/      DM Serif Display e Source Sans 3
+- public/legal/        fonte dos documentos legais
+- docs/                landing pública, documentos legais, assets e downloads
+  - assets/screens/    capturas WebP da landing
+  - downloads/         MSIX e certificado público da demonstração
+  - app/               build web gerado por pnpm build (versionado para o Pages)
+- msix/                manifesto, host C#, WebView2 fixo e Build-MSIX.ps1
+- tools/               scripts de build, assets, capturas, importação e QA
+- tests/               testes Vitest de agenda, importação e sync
+- entregas/            artefatos locais gerados (ignorado pelo git)
+- dados/               importação real da planilha (ignorado pelo git)
+- manual.txt           este arquivo
+- log.txt              diário local de etapas (ignorado pelo git)
+
+5. MODELO DE DADOS E AGENDA
+---------------------------
+- CareModel configurável: triage, individual, group, collective, other.
+- Paciente vinculado a um modelo de cuidado.
+- Paciente: nome, cadastro, idade, telefone, sem WhatsApp, data/motivo do
+  encaminhamento, equipe de origem, data de triagem, prioridade, recorrência,
+  dia preferido, observações, anotações e tentativas de contato.
+- Capacidade semanal por dia e tipo: triage, individual, group, collective,
+  makeup.
+- Exceções por data: fechado, motivo e capacidade especial.
+- Prioridade sempre à frente na fila de triagem.
+- Planejamento determinístico de 90 dias; compromissos manuais, bloqueados,
+  concluídos e faltas são preservados.
+- Grupos usam a recorrência do modelo; individuais usam a recorrência do
+  paciente.
+- Quem não cabe no horizonte aparece em "sem vaga", com motivo.
+
+6. FLUXO DE IMPORTAÇÃO
+----------------------
+Planilha real de referência (aba "encaminhamentos", colunas A–J):
+https://docs.google.com/spreadsheets/d/1hlywJQV4E8tERijJbCA-DUA5xx_NQRzxDomAssmc69w/edit?usp=sharing
+
+Comando local:
+  pnpm import-sheet
+
+Saída:
+  dados/importacao-planilha.json
+
+O comando baixa o CSV público via gviz, usa o mesmo importador da interface
+(SSR do Vite), normaliza nomes em caixa alta, telefones, datas, modelos e
+prioridades, e grava um JSON no formato aceito por
+"Ajustes → Dados e importação → Importar JSON". O arquivo contém dados
+pessoais e está no .gitignore. NUNCA publicar, anexar ou enviar por e-mail.
+
+A planilha de exemplo tem cerca de 209 linhas; a importação consolidou
+cadastros repetidos e reconheceu 208 pacientes únicos na última execução.
+
+7. COMO DESENVOLVER
+-------------------
+Requisitos: Node 24+, pnpm 12+, Windows 10/11, Edge WebView2 Runtime.
+  pnpm install
+  pnpm dev          # http://127.0.0.1:4180/
+  pnpm check        # TypeScript
+  pnpm test         # Vitest
+  pnpm build        # legal + build Vite + cópia para docs/app/
+  pnpm docs         # servidor local da landing em http://127.0.0.1:4190/
+
+8. COMO GERAR O MSIX
+--------------------
+  powershell -ExecutionPolicy Bypass -File msix\Build-MSIX.ps1
+
+O script:
+1. roda o build web (inclui a cópia para docs/app/);
+2. limpa o staging e copia dist, host e WebView2 fixo;
+3. carimba a versão no AppxManifest;
+4. compila Launcher.cs com csc do .NET Framework 4.8;
+5. remove cache/perfil WebView2 do pacote;
+6. gera e assina o MSIX com certificado de teste;
+7. valida o pacote desempacotando.
+
+Saídas:
+- entregas/HorizonteDeCuidado_1.0.0.0_x64.msix
+- entregas/HorizonteDeCuidado-dev.cer
+
+Para a landing/Pages, copiar os dois arquivos para docs/downloads/.
+O .cer é público; o .pfx e a senha do certificado ficam em msix/ e são
+ignorados pelo git. A Microsoft Store reassina o pacote em produção.
+
+9. NUVEM GOOGLE DRIVE
+---------------------
+- Client OAuth: criado no projeto Google "horizonte-de-cuidado". O JSON do
+  client "Desktop app" fica em msix/google-client.json (ignorado pelo git;
+  nunca versionar). Há um client Desktop alternativo na pasta local de
+  credenciais; usar apenas um por build.
+- Escopo mínimo: https://www.googleapis.com/auth/drive.appdata
+- Login por PKCE + loopback local com porta dinâmica (nunca IP literal).
+- Token no Windows via DPAPI.
+- Arquivos de backup por dispositivo na pasta privada appDataFolder.
+- Payload em JSON claro nesta versão; a política de privacidade documenta a
+  limitação. Não há criptografia adicional de aplicativo no backup.
+- Sem client configurado, a interface mostra "nuvem não configurada" e as
+  funções locais continuam funcionando. A build atual inclui o client; o
+  login só é concluído com consentimento e token válido.
+- Demo nunca sobe para nuvem vazia; base demo é substituída por dados remotos
+  válidos no primeiro login; backups inválidos não sobrescrevem nada.
+
+10. DOCUMENTOS LEGAIS E LANDING
+-------------------------------
+Fonte: public/legal/
+- politica-de-privacidade.html
+- termos-de-servico.html
+- aviso-legal.html
+- suporte.html
+- legal.css
+
+  pnpm legal   # copia para docs/ com validação de BOM e U+FFFD
+
+Landing: docs/index.html + docs/site.css + docs/assets/.
+Metadados, Open Graph, robots.txt, sitemap.xml e downloads estão preparados.
+A demonstração web fica em docs/app/, é gerada por pnpm build a partir de dist/
+e é versionada para o GitHub Pages. Os documentos legais canônicos continuam na
+raiz de docs/; o build também leva uma cópia para docs/app/legal/. Não editar
+docs/app/ à mão. A versão web é demonstrativa e não acessa o Google Drive.
+URLs públicas:
+- Landing: https://wavizo-bot.github.io/Horizonte-de-cuidado/
+- Repositório: https://github.com/wavizo-bot/Horizonte-de-cuidado
+- Pages: main, pasta /docs.
+
+11. ASSETS DE LOJA
+------------------
+- Capturas de loja: entregas/store/01-hoje.png a 06-relatorios.png
+  (1366x768; exatamente seis).
+- Arte 9:16: entregas/store/arte-720x1080.png.
+- Arte 1:1: entregas/store/arte-1080x1080.png.
+- Ícones MSIX e PWA: msix/Assets/, public/, docs/assets/.
+- Feature graphic 1024x500, splash 620x300, tile largo 310x150, OG 1200x630.
+Todos usam dados fictícios; nenhuma captura contém dados reais.
+
+12. TESTES E VERIFICAÇÃO
+------------------------
+  pnpm test              # 33 testes: agenda, importação e sync
+  pnpm check             # TypeScript
+  pnpm check:privacy     # dados reais da base local em arquivos públicos
+  pnpm build             # build de produção
+  node tools\visual-check.mjs   # QA visual com Playwright/Edge
+  node tools\check-site.mjs     # landing: links, imagens, overflow, console
+  node tools\make-screenshots.mjs
+
+Servidores locais:
+- app: http://127.0.0.1:4180/
+- landing: http://127.0.0.1:4190/
+
+13. CREDENCIAIS — ONDE FICAM (NUNCA O CONTEÚDO)
+-----------------------------------------------
+- Google OAuth: msix/google-client.json (ignorado; presente na build atual).
+- Certificado de teste: msix/devcert.pfx e msix/.devcert-password
+  (ambos ignorados; não versionar).
+- Partner Center: identidade reservada; pacote wavizo.Horizontedecuidado,
+  PFN wavizo.Horizontedecuidado_c5p81jb0en0bm, Store ID 9NFVH4GZLNJF.
+- GitHub: conta wavizo-bot, repositório Horizonte-de-cuidado.
+- Contato público: mmr05@hotmail.com / (11) 97883-1938.
+
+14. VERSÕES
+-----------
+- 1.0.0.0 — demonstração local, MSIX assinado com certificado de teste,
+  landing, documentos legais e demonstração web prontos. Nuvem com client
+  OAuth Desktop; backup opcional. Não enviada ao Partner Center.
+  SHA256 do último MSIX:
+  6B23A0196FDC1CB50CC4453C7DDFB483AD914663F3C9BFB21BB5B16326173BFA
+
+15. ARMADILHAS CONHECIDAS
+-------------------------
+- Datas civis usam YYYY-MM-DD e funções próprias; nunca toISOString() para
+  data civil.
+- A chave AES fica no mesmo localStorage; não protege contra perfil
+  desbloqueado.
+- Limpar dados do navegador/perfil apaga o caderno local.
+- O backup no Drive é JSON claro nesta versão.
+- WebView2 não pode levar cache/cookies no MSIX; o Build-MSIX limpa.
+- Certificado de teste em TrustedPeople pode exigir administrador.
+- A planilha real tem nomes em caixa alta, telefones incompletos e linhas
+  repetidas; o importador consolida por cadastro, mas a revisão humana é
+  obrigatória.
+- A primeira coluna da planilha é "F"; o importador a trata como nome quando
+  não há coluna de nome.
+- `pnpm build` roda o sync legal antes do Vite e copia o resultado para
+  docs/app/; manter os documentos em public/legal e não editar docs/ nem
+  docs/app/ à mão.
+- Se a identidade do pacote mudar, atualizar também package.json, index.html,
+  manifestos, landing, README, legal e pasta do projeto.
+- O repositório público não pode conter dados/, log.txt, .pfx, tokens ou
+  exports reais. Rodar pnpm check:privacy antes de cada commit público; ele
+  compara nomes, matrículas e telefones da base local com os arquivos
+  versionados e com dist/ e msix/staging/www.
+
+16. PENDÊNCIAS
+--------------
+1. Confirmar conta GitHub e nome do repositório; publicar Pages em main/docs.
+2. Testar login Google/Drive de ponta a ponta com uma conta autorizada; a tela
+   de consentimento do cliente já foi validada.
+3. Revisar textos legais com o responsável antes da publicação.
+4. Enviar o MSIX final ao Partner Center e concluir a listagem da Store.
+5. Manter docs/app/ gerado do mesmo commit da landing e testar /app/ antes de
+   cada publicação; a versão web é demonstrativa e não acessa o Drive.
+6. Registrar commit/tag no log.txt após a publicação.
+7. Opcional: renomear a pasta de trabalho de "teste" para
+   "horizonte-de-cuidado"; os scripts usam o diretório atual.
+
+17. CONTATO
+-----------
+Maycon M. R. — mmr05@hotmail.com — (11) 97883-1938
+Projeto independente. Não é prontuário, sistema oficial ou dispositivo médico.

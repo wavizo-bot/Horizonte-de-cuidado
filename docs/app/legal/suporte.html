@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Suporte — Horizonte de Cuidado</title>
+  <meta name="description" content="Suporte do Horizonte de Cuidado: instalação do MSIX, backup no Google Drive, importação de planilha, exportação, privacidade e contato.">
+  <meta name="theme-color" content="#174A3A">
+  <link rel="stylesheet" href="legal.css">
+</head>
+<body>
+  <header class="legal-header">
+    <div class="legal-header__inner">
+      <a class="legal-brand" href="#" aria-label="Horizonte de Cuidado">
+        <svg viewBox="0 0 56 56" aria-hidden="true">
+          <circle cx="28" cy="22" r="8" fill="#F6F1E6"/>
+          <path d="M5 37c6-7 12-7 18 0s12 7 18 0 9-4 10-2" fill="none" stroke="#F6F1E6" stroke-width="3.2" stroke-linecap="round"/>
+          <path d="M7 46c6-5 11-5 17 0s11 5 17 0 8-3 9-2" fill="none" stroke="#D9C9A8" stroke-width="2.4" stroke-linecap="round" opacity=".8"/>
+        </svg>
+        <span><strong>Horizonte de Cuidado</strong><span>Documentos legais</span></span>
+      </a>
+      <nav class="legal-nav" aria-label="Documentos legais">
+        <a href="politica-de-privacidade.html">Privacidade</a>
+        <a href="termos-de-servico.html">Termos</a>
+        <a href="aviso-legal.html">Aviso legal</a>
+        <a href="suporte.html" aria-current="page">Suporte</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="legal-main">
+    <p class="legal-kicker">Suporte</p>
+    <h1>Como podemos ajudar.</h1>
+    <p class="legal-lead">
+      Consulte as respostas rápidas abaixo. Se precisar falar com o desenvolvedor, use o contato
+      indicado — sem enviar dados reais de pacientes.
+    </p>
+    <p class="legal-meta"><strong>Versão:</strong> 1.0.0 · <strong>Atualizado em:</strong> 29 de outubro de 2026</p>
+
+    <div class="legal-card legal-card--green">
+      <p><strong>Contato:</strong> <a href="mailto:mmr05@hotmail.com">mmr05@hotmail.com</a> ·
+      <a href="tel:+5511978831938">(11) 97883-1938</a> · atendimento em horário comercial.
+      Para problemas de instalação, informe a versão do Windows e a mensagem de erro, sem anexar dados de pacientes.</p>
+    </div>
+
+    <h2>Instalação no Windows</h2>
+    <h3>O arquivo é um MSIX. Como instalo?</h3>
+    <p>
+      Baixe o pacote <code>.msix</code> e o certificado público <code>.cer</code> da mesma versão.
+      O certificado de teste precisa ser confiável no computador. Em muitos ambientes, a instalação
+      de certificado em <em>TrustedPeople</em> exige administrador. Depois, abra o <code>.msix</code>
+      com duplo clique ou use <em>Instalar</em> nas propriedades do arquivo.
+    </p>
+    <p>
+      Em ambiente institucional, prefira publicar o aplicativo pelo Microsoft Store/Partner Center ou
+      distribuir via Intune/GPO com o certificado aprovado pela TI. Não instale certificados de origem
+      desconhecida.
+    </p>
+
+    <h3>O Windows diz que o aplicativo não pode ser instalado</h3>
+    <ul>
+      <li>Confirme que o pacote é x64 e que o Windows é 10 versão 1809 (build 17763) ou superior.</li>
+      <li>Confirme que o certificado público corresponde ao pacote e está confiável.</li>
+      <li>Verifique se o WebView2 Runtime está instalado (Windows 11 normalmente já o inclui).</li>
+      <li>Se a política da instituição bloquear sideload, solicite liberação à TI ou use o Store.</li>
+    </ul>
+
+    <h2>Dados, backup e restauração</h2>
+    <h3>Onde ficam os dados?</h3>
+    <p>
+      No armazenamento local do pacote Windows, cifrados com AES-GCM. Se você conectar uma conta
+      Google em <em>Ajustes → Nuvem</em>, o aplicativo também envia backups para a pasta privada
+      <code>appDataFolder</code> do seu Drive. Não há servidor próprio do projeto.
+    </p>
+
+    <h3>Como faço backup manual?</h3>
+    <p>
+      Em <em>Ajustes → Dados e importação</em>, use <strong>Exportar</strong> para salvar um JSON.
+      Guarde o arquivo em local autorizado pela instituição. O JSON exportado contém dados pessoais:
+      não envie por e-mail, não publique e não deixe em pasta compartilhada sem controle.
+    </p>
+
+    <h3>Como restauro em outro computador?</h3>
+    <ol>
+      <li>Instale o aplicativo e conclua o onboarding.</li>
+      <li>Se for usar a nuvem, conecte a mesma conta Google e aguarde a sincronização.</li>
+      <li>Se for usar arquivo, abra <em>Ajustes → Dados e importação</em> e importe o JSON exportado.</li>
+      <li>Confira pacientes, agenda e modelos antes de atender. A importação substitui o conteúdo atual; exporte antes.</li>
+    </ol>
+
+    <h3>A nuvem mostra “não configurada”</h3>
+    <p>
+      O cliente OAuth do Google é incluído no pacote no momento da build. Se ele não estiver presente,
+      o aplicativo abre normalmente, mas sem nuvem. A versão web também não acessa o Drive. Isso é uma
+      limitação intencional desta versão de demonstração; fale com o suporte para a build institucional.
+    </p>
+
+    <h3>Apaguei os dados do navegador e perdi o caderno</h3>
+    <p>
+      A versão web guarda os dados no <code>localStorage</code> do navegador. Limpar dados do site,
+      usar navegação privada ou trocar de perfil pode apagar o caderno. Se houver backup no Drive ou
+      exportação JSON, restaure por eles. Sem backup, não é possível recuperar o conteúdo local.
+    </p>
+
+    <h2>Importação de planilha</h2>
+    <h3>Quais colunas são aceitas?</h3>
+    <p>
+      A planilha de encaminhamentos deve ter as colunas A–J: nome, cadastro, idade, telefone, data do
+      encaminhamento, motivo, equipe de origem, data de triagem, modelo de cuidado e observações.
+      O importador tolera nomes incompletos, telefones ausentes e datas em formatos diferentes, mas
+      mostra um resumo para conferência antes de aplicar.
+    </p>
+    <h3>A importação duplicou pacientes</h3>
+    <p>
+      Confira se a planilha tem linhas repetidas ou se o mesmo arquivo foi importado duas vezes. A
+      importação não faz mesclagem automática de cadastros; revise a lista e exclua duplicatas antes
+      de usar a agenda. Exporte uma cópia antes de qualquer importação grande.
+    </p>
+
+    <h2>WhatsApp e contatos</h2>
+    <h3>O aplicativo envia mensagens sozinho?</h3>
+    <p>
+      Não. Ele prepara o texto e abre o WhatsApp com a mensagem; o envio continua sendo um ato humano.
+      O histórico registra canal, resultado e observação, sem copiar a conversa.
+    </p>
+    <h3>Paciente sem WhatsApp</h3>
+    <p>
+      Marque <em>Sem WhatsApp</em> no cadastro. A fila e os relatórios passam a sinalizar a preferência
+      e você pode registrar tentativas por ligação, SMS, contato presencial ou outro canal.
+    </p>
+
+    <h2>Privacidade e uso responsável</h2>
+    <p>
+      Leia a <a href="politica-de-privacidade.html">Política de Privacidade</a>,
+      os <a href="termos-de-servico.html">Termos de Serviço</a> e o
+      <a href="aviso-legal.html">Aviso Legal</a>. Em resumo: use dados fictícios na demonstração,
+      tenha base legal para dados reais, controle o acesso ao dispositivo e não trate o aplicativo
+      como prontuário ou dispositivo médico.
+    </p>
+
+    <div class="legal-card legal-card--clay">
+      <p><strong>Emergência:</strong> este aplicativo não é um canal de emergência. Em risco de vida,
+      crise aguda ou risco de autoagressão, acione SAMU (192), o serviço de emergência local, o
+      CAPS/CAPS AD de referência ou a rede de proteção.</p>
+    </div>
+
+    <div class="legal-actions">
+      <a class="legal-button" href="politica-de-privacidade.html">Privacidade</a>
+      <a class="legal-button" href="termos-de-servico.html">Termos</a>
+      <a class="legal-button legal-button--solid" href="#" onclick="history.back();return false;">Voltar</a>
+    </div>
+  </main>
+
+  <footer class="legal-footer">
+    <div class="legal-footer__inner">
+      <span>Horizonte de Cuidado · versão 1.0.0 · suporte atualizado em 29/10/2026</span>
+      <span><a href="politica-de-privacidade.html">Privacidade</a> · <a href="termos-de-servico.html">Termos</a> · <a href="aviso-legal.html">Aviso legal</a> · <a href="suporte.html">Suporte</a></span>
+    </div>
+  </footer>
+</body>
+</html>

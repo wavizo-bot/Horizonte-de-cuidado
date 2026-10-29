@@ -1,0 +1,41 @@
+# Dependências e builds locais
+node_modules/
+dist/
+build/
+entregas/
+msix/staging/
+msix/.staging/
+*.WebView2/
+
+# Dados reais e exports (LGPD) — nunca versionar
+dados/
+*.csv
+*.json.gz
+exports/
+backups/
+
+# Segredos e certificados
+*.pfx
+*.key
+*.p12
+*.pem
+client_secret*.json
+google-client.json
+msix/devcert.pfx
+msix/.devcert-password
+
+# Ambiente e temporários
+.env*
+tmp/
+*.tmp
+*.log
+log.txt
+Thumbs.db
+.DS_Store
+
+# Ferramentas locais
+.vscode/
+.idea/
+coverage/
+playwright-report/
+test-results/

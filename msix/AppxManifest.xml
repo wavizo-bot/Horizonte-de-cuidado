@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Package
+  xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
+  xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+  xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
+  IgnorableNamespaces="uap rescap">
+  <Identity
+    Name="wavizo.Horizontedecuidado"
+    Publisher="CN=57BB464E-553F-45B6-A4ED-B253157408EB"
+    Version="1.0.0.0"
+    ProcessorArchitecture="x64" />
+  <Properties>
+    <DisplayName>Horizonte de Cuidado</DisplayName>
+    <PublisherDisplayName>wavizo</PublisherDisplayName>
+    <Logo>Assets\StoreLogo.png</Logo>
+    <Description>Agenda, filas e comunicacao para equipes de saude mental: matriciamento, grupos, atendimentos individuais, contatos e planejamento de 90 dias.</Description>
+  </Properties>
+  <Resources>
+    <Resource Language="pt-BR" />
+    <Resource Language="en" />
+  </Resources>
+  <Dependencies>
+    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.17763.0" MaxVersionTested="10.0.26100.0" />
+  </Dependencies>
+  <Capabilities>
+    <rescap:Capability Name="runFullTrust" />
+    <Capability Name="internetClient" />
+  </Capabilities>
+  <Applications>
+    <Application Id="App" Executable="HorizonteDeCuidado.exe" EntryPoint="Windows.FullTrustApplication">
+      <uap:VisualElements
+        DisplayName="Horizonte de Cuidado"
+        Description="Organizacao de encaminhamentos, agenda e comunicacao em saude mental."
+        BackgroundColor="#174A3A"
+        Square150x150Logo="Assets\Square150x150Logo.png"
+        Square44x44Logo="Assets\Square44x44Logo.png">
+        <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" />
+        <uap:SplashScreen Image="Assets\SplashScreen.png" />
+      </uap:VisualElements>
+    </Application>
+  </Applications>
+</Package>
