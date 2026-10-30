@@ -444,6 +444,9 @@ Build Android verificada:
   9NFVH4GZLNJF); MSIX local assinado com certificado de teste, landing,
   documentos legais e demonstração web. Nuvem com cliente OAuth Desktop;
   backup opcional.
+- Build instalada pela Store validada em 30/10/2026: pacote
+  wavizo.Horizontedecuidado_1.0.0.0_x64, SignatureKind Store, janela e
+  WebView2 renderizados; Ajustes > Nuvem conectado com 12 pacientes.
 
 SHA-256 desta build:
   MSIX .............. DE45BB04A5F05D29C89075D39C75A2E5845EA5995798A1686ED54DED831FBBD8
@@ -510,11 +513,12 @@ APK são artefatos locais; o AAB é o arquivo a enviar ao Play.
 4. Revisar os textos legais com o responsável; os documentos já estão
    publicados nas URLs públicas.
 5. MSIX publicado na Microsoft Store em 29/10/2026 (ID 9NFVH4GZLNJF).
-   Falta testar a instalação AppX local em sessão elevada (certificado em
-   LocalMachine\TrustedPeople) e o fluxo de atualização pela Store. Corrigir
-   no Partner Center a URL de privacidade (hoje aponta para um blob do GitHub,
-   que mostra o código-fonte) para a URL do Pages e a grafia do nome para
-   "Horizonte de Cuidado".
+   Instalação pela Store validada em 30/10/2026 (pacote Store, WebView2 e
+   nuvem). Falta testar a instalação AppX local em sessão elevada (certificado
+   em LocalMachine\TrustedPeople) e o fluxo de atualização pela Store.
+   Corrigir no Partner Center a URL de privacidade (hoje aponta para um blob
+   do GitHub, que mostra o código-fonte) para a URL do Pages e a grafia do
+   nome para "Horizonte de Cuidado".
 6. Criar o app no Play Console, preencher a ficha (já preparada em
    entregas/play/), a segurança de dados, a classificação, o público-alvo e a
    URL de privacidade; enviar o AAB. Depende das credenciais do console.
