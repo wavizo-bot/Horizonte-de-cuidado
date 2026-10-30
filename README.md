@@ -172,6 +172,15 @@ Identidade Android:
 - Microsoft Store: ID `9NFVH4GZLNJF`; pacote ainda não enviado ao Partner Center.
 - Google Play: envio pendente; pacote `horizonte.de.cuidado`.
 
+## Publicação
+
+A ficha do Google Play é gerada localmente em `entregas/play/` por `node tools/make-play-assets.mjs` (pasta ignorada pelo git). Ela contém textos, ícone, feature graphic, seis capturas de telefone e seis de tablet, respostas de segurança de dados, classificação de conteúdo e checklist de envio.
+
+- Política de privacidade pública: <https://wavizo-bot.github.io/Horizonte-de-cuidado/politica-de-privacidade.html>
+- Suporte público: <https://wavizo-bot.github.io/Horizonte-de-cuidado/suporte.html>
+- Classificação de conteúdo sugerida: Livre; público-alvo: 18+ (profissionais).
+- O envio ao Play Console e ao Microsoft Partner Center depende das credenciais dos respectivos consoles; não há credenciais de publicação no repositório.
+
 ## Contato
 
 Maycon M. R. — [mmr05@hotmail.com](mailto:mmr05@hotmail.com) — [(11) 97883-1938](tel:+5511978831938)

@@ -135,10 +135,20 @@ const ficha = `# Google Play — Horizonte de Cuidado
 - Nome do aplicativo: **Horizonte de Cuidado**
 - Pacote: \`horizonte.de.cuidado\`
 - Versão: 1.0.0 (versionCode 1)
-- Categoria: Medicina (ou Saúde e fitness)
-- Público-alvo: profissionais e equipes de saúde mental (18+)
-- Classificação etária: definir no questionário do Play; não direcionado a crianças
-- Preço: gratuito, sem compras no aplicativo
+- Idioma padrão: Português (Brasil)
+- Categoria: Medicina (ferramenta de organização; não é dispositivo médico)
+- Público-alvo: profissionais e equipes de saúde mental, 18+
+- Classificação de conteúdo: Livre (sem violência, sexo, drogas, jogos de azar ou conteúdo gerado por usuários)
+- Preço: gratuito, sem anúncios e sem compras no aplicativo
+- Distribuição inicial: Brasil
+
+## Canais e URLs
+
+- Política de privacidade: ${privacy}
+- Suporte: https://wavizo-bot.github.io/Horizonte-de-cuidado/suporte.html
+- Landing: https://wavizo-bot.github.io/Horizonte-de-cuidado/
+- Repositório: https://github.com/wavizo-bot/Horizonte-de-cuidado
+- Contato: mmr05@hotmail.com
 
 ## Textos
 
@@ -179,6 +189,16 @@ profissional.
 Primeira versão para Android: agenda, filas, pacientes, grupos, mensagens,
 relatórios, importação/exportação e backup opcional no Google Drive.
 
+## Acesso para revisão
+
+- O app funciona sem login. Agenda, filas, pacientes, grupos, mensagens,
+  relatórios, importação e exportação ficam disponíveis na primeira abertura.
+- O login Google é opcional e serve apenas para o backup no Google Drive
+  (escopo \`drive.appdata\`). Não há conta criada no desenvolvedor.
+- Para testar o backup, use uma conta Google de teste e autorize o acesso.
+  Nenhuma credencial especial é necessária para as funções principais.
+- Não há anúncios, compras, assinatura, chat ou conteúdo gerado por usuários.
+
 ## Privacidade e segurança
 
 - Política de privacidade: ${privacy}
@@ -189,22 +209,73 @@ relatórios, importação/exportação e backup opcional no Google Drive.
   diante usa MediaStore sem permissão. A importação usa o seletor de arquivos do
   sistema (SAF), sem acesso amplo ao armazenamento.
 - Login Google nativo, sem WebView de login e sem navegador externo.
+- Sem Advertising ID, analytics de terceiros, perfilamento ou venda de dados.
 
-## Segurança de dados (respostas sugeridas)
+## Segurança de dados (Play Console)
 
-- O app coleta dados? Sim, para funcionalidade e backup opcional: informações
-  pessoais (nome, telefone, data de nascimento) e informações de saúde
-  (encaminhamento, prioridade, atendimentos, anotações).
-- Os dados são compartilhados? Não com o desenvolvedor nem com terceiros. O
-  backup opcional vai para a pasta privada \`appDataFolder\` da conta Google do
-  próprio usuário; o desenvolvedor não tem acesso.
-- Os dados são cifrados em trânsito? Sim (HTTPS/TLS). Em repouso, o caderno local
-  usa AES-GCM; o backup no Drive é JSON claro protegido pela conta Google.
-- Os dados são opcionais? Sim. O app funciona sem conta Google e sem backup.
-- Exclusão: o usuário pode apagar os dados locais em Ajustes e excluir o backup
-  no Drive; também pode desinstalar o app. Contato de privacidade disponível.
-- Anúncios ou rastreamento? Não. Sem Advertising ID, analytics ou venda de dados.
-- Público infantil? Não. Ferramenta para profissionais; não direcionada a menores.
+### Coleta e compartilhamento
+
+- **E-mail:** coletado apenas se o usuário conectar uma conta Google, para
+  autenticação e identificação da conta; não é compartilhado com o desenvolvedor.
+- **Informações pessoais:** nome, telefone e data de nascimento dos pacientes,
+  inseridos pelo profissional para a funcionalidade do app; não são
+  compartilhados com o desenvolvedor.
+- **Informações de saúde:** encaminhamento, prioridade, atendimentos e
+  anotações, inseridos pelo profissional; não são compartilhados com o
+  desenvolvedor.
+- **Arquivos e documentos:** importação/exportação apenas por ação do usuário,
+  no próprio aparelho; o app não envia esses arquivos ao desenvolvedor.
+- **Backup opcional:** o app grava o estado na pasta privada \`appDataFolder\`
+  da conta Google do próprio usuário, via Google Drive API. O desenvolvedor não
+  recebe, não acessa e não vende esses dados. O Google atua como provedor do
+  armazenamento escolhido pelo usuário.
+- **Não coletados:** localização, contatos, SMS, câmera, microfone, fotos,
+  histórico de navegação, Advertising ID, dados financeiros ou de pagamento.
+- **Anúncios/rastreamento:** não há anúncios, analytics de terceiros,
+  perfilamento ou venda de dados.
+
+### Práticas de segurança
+
+- Em trânsito: HTTPS/TLS.
+- Em repouso: caderno local com AES-GCM 256; a chave fica no próprio aparelho
+  (limitação documentada). O backup no Drive é JSON claro protegido pela conta
+  Google; o app não adiciona criptografia própria ao backup.
+- Acesso: o app funciona sem conta; o backup é opcional e pode ser desconectado
+  a qualquer momento.
+
+### Exclusão e retenção
+
+- Dados locais: Ajustes > Dados e importação > Apagar dados; desinstalar o app
+  também remove os dados locais.
+- Backup: o usuário pode excluir o arquivo na pasta \`appDataFolder\` do Google
+  Drive ou revogar o acesso; o app não mantém cópia no servidor do desenvolvedor.
+- Retenção: os dados ficam no aparelho/conta do usuário até que ele os apague.
+- Contato de privacidade: mmr05@hotmail.com.
+
+### Respostas diretas do formulário
+
+- O app coleta ou compartilha dados? **Sim, coleta; não compartilha com o
+  desenvolvedor.** Declarar e-mail (opcional), informações pessoais e
+  informações de saúde.
+- Os dados são cifrados em trânsito? **Sim.**
+- Os usuários podem solicitar a exclusão? **Sim**, pelos meios acima.
+- A coleta é opcional? **Sim** para o backup; os dados de pacientes são
+  inseridos voluntariamente pelo profissional.
+- O app é direcionado a crianças? **Não.**
+- O app usa Advertising ID? **Não.**
+
+## Classificação de conteúdo (questionário)
+
+- Violência, conteúdo sexual, linguagem imprópria, drogas, jogos de azar ou
+  terror: **não**.
+- Conteúdo gerado por usuários ou interação social: **não** (as mensagens são
+  textos prontos; o envio pelo WhatsApp é uma ação humana fora do app).
+- Compartilhamento de localização: **não**.
+- Compras digitais: **não**.
+- Resultado sugerido: **Livre**; público-alvo declarado **18+** (ferramenta
+  profissional).
+- O app lida com dados de saúde, mas não é dispositivo médico, prontuário
+  eletrônico ou canal de emergência.
 
 ## Assets nesta pasta
 
@@ -215,7 +286,9 @@ relatórios, importação/exportação e backup opcional no Google Drive.
 
 ## Checklist de envio
 
-1. Criar o app no Play Console com o pacote \`horizonte.de.cuidado\`.
+1. Criar o app no Play Console com o pacote \`horizonte.de.cuidado\`, nome
+   **Horizonte de Cuidado**, idioma padrão Português (Brasil), categoria
+   Medicina e contato mmr05@hotmail.com.
 2. Ativar o Play App Signing. O SHA-1 do certificado do Play
    (\`12:5B:4F:5D:22:58:61:40:7C:59:12:FD:B4:52:29:E5:37:F7:72:D8\`) precisa
    estar cadastrado no cliente OAuth Android do projeto. Para testar o APK
@@ -224,8 +297,14 @@ relatórios, importação/exportação e backup opcional no Google Drive.
 3. Enviar \`app-release.aab\` em teste interno; instalar pelo Play e concluir o
    login Google/Drive no aparelho. O APK assinado localmente não autentica
    enquanto o SHA-1 da upload key não estiver no Console.
-4. Preencher a ficha, classificação de conteúdo, segurança de dados e público.
-5. Revisar os documentos legais e publicar em produção.
+4. Preencher a ficha (assets, textos, URLs), a segurança de dados, a
+   classificação de conteúdo e o público-alvo 18+.
+5. Revisar os documentos legais e publicar a política de privacidade e o
+   suporte nas URLs públicas.
+6. Antes da produção, testar a build assinada pelo Play e confirmar o SHA-1 do
+   Play App Signing no cliente OAuth Android.
+7. Guardar o \`mapping.txt\` desta versão com o AAB e manter o \`versionCode\`
+   sempre maior no próximo envio.
 `;
 
 await writeFile(`${out}/ficha-play.md`, ficha, "utf8");

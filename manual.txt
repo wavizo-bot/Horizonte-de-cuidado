@@ -301,6 +301,22 @@ Gerar novamente:
 Todos usam dados fictícios; nenhuma captura contém dados reais. As capturas de
 telefone usam a visão diária da agenda para não cortar a semana.
 
+A ficha final define:
+- categoria Medicina; idioma Português (Brasil); público-alvo 18+;
+- classificação de conteúdo Livre (sem violência, sexo, drogas, jogos de azar
+  ou conteúdo gerado por usuários);
+- segurança de dados: coleta opcional de e-mail, informações pessoais e
+  informações de saúde; não compartilha com o desenvolvedor; backup opcional
+  na pasta privada appDataFolder da conta Google do próprio usuário; TLS em
+  trânsito; exclusão local/Drive; sem Advertising ID;
+- acesso para revisão sem login (o login Google é opcional e só serve ao
+  backup);
+- URLs públicas de privacidade e suporte, contato e checklist de envio.
+
+O envio ao Play Console e ao Microsoft Partner Center depende das credenciais
+dos consoles. Não há gcloud, fastlane, az, msstore nem service account de
+publicação nesta máquina; nenhuma credencial de console é versionada.
+
 13. TESTES E VERIFICAÇÃO
 ------------------------
   pnpm check              # TypeScript: sem erros
@@ -435,10 +451,13 @@ APK são artefatos locais; o AAB é o arquivo a enviar ao Play.
 2. Teste de cancelamento concluído no APK universal final; reinstalar o APK
    final em outros aparelhos de teste quando necessário.
 3. Testar em tablet físico, retrato e paisagem.
-4. Revisar os textos legais com o responsável e publicar os documentos.
-5. Enviar o MSIX final ao Partner Center e concluir a listagem da Store.
-6. Criar o app no Play Console, preencher ficha, segurança de dados,
-   classificação, público-alvo e URL de privacidade; enviar o AAB.
+4. Revisar os textos legais com o responsável; os documentos já estão
+   publicados nas URLs públicas.
+5. Enviar o MSIX final ao Partner Center e concluir a listagem da Store;
+   depende das credenciais do console.
+6. Criar o app no Play Console, preencher a ficha (já preparada em
+   entregas/play/), a segurança de dados, a classificação, o público-alvo e a
+   URL de privacidade; enviar o AAB. Depende das credenciais do console.
 7. Manter docs/app/ gerado do mesmo commit da landing e testar /app/ antes de
    cada publicação.
 8. Rodar pnpm check:privacy antes de cada commit público.
