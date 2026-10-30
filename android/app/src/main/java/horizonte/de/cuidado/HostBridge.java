@@ -137,9 +137,15 @@ final class HostBridge {
                 default:
                     reply(id, null);
             }
-        } catch (Exception e) {
-            Log.w(TAG, "Falha em " + method, e);
-            reply(id, null);
+        } catch (Throwable e) {
+            // Throwable, não só Exception: um NoClassDefFoundError/NoSuchMethod
+            // no release não pode deixar a Promise do WebView pendurada.
+            Log.e(TAG, "Falha em " + method, e);
+            if ("DriveLogin".equals(method)) {
+                reply(id, DriveHost.loginError("Falha interna no login. Tente novamente."));
+            } else {
+                reply(id, null);
+            }
         }
     }
 

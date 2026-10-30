@@ -54,11 +54,15 @@
         android:usesCleartextTraffic="false"
         tools:targetApi="36">
 
+        <!-- singleTask/singleInstance colocam a Activity em uma tarefa
+             separada e o Google Sign-In volta sem onActivityResult (o seletor
+             fecha e o login fica sem resposta). singleTop evita instâncias
+             duplicadas sem quebrar o retorno de Activity Result. -->
         <activity
             android:name=".MainActivity"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|screenLayout|uiMode|navigation|locale"
             android:exported="true"
-            android:launchMode="singleTask"
+            android:launchMode="singleTop"
             android:resizeableActivity="true"
             android:windowSoftInputMode="adjustResize">
 

@@ -116,7 +116,12 @@ Para testar o artefato final:
 adb install -r android\app\build\outputs\apk\release\app-release.apk
 ```
 
-O AAB também pode ser convertido em APK universal com `bundletool` para teste no aparelho. O login Google no Android só funciona quando o SHA-1 do certificado que assinou o APK está cadastrado no cliente OAuth Android do projeto. Para a build distribuída pelo Play, o SHA-1 relevante é o do Play App Signing.
+O AAB também pode ser convertido em APK universal com `bundletool` para teste no aparelho. O login Google no Android usa o par pacote + SHA-1 do certificado, então cada certificado que assina uma build precisa estar cadastrado em um cliente OAuth Android do projeto (um cliente com várias impressões digitais ou um cliente por certificado):
+
+- APK/AAB local, assinado com a upload key: SHA-1 `35:14:75:E6:C6:E1:EE:F8:DF:3F:5D:03:70:C5:DC:5C:A1:B8:74:F6`.
+- Build instalada pelo Play, reassinada pelo Play App Signing: SHA-1 `12:5B:4F:5D:22:58:61:40:7C:59:12:FD:B4:52:29:E5:37:F7:72:D8`.
+
+O Play Console mostra apenas o SHA-1 do App Signing. O da upload key é local e pode ser obtido com `cd android; .\gradlew.bat signingReport` ou `apksigner verify --print-certs app\build\outputs\apk\release\app-release.apk`.
 
 ## Estrutura
 
@@ -139,7 +144,7 @@ log.txt              diário local de etapas (ignorado pelo git)
 
 ## Versão atual
 
-**1.0.0** — Android `versionCode` 1; Windows/MSIX `1.0.0.0`.
+**1.0.0** — Android `versionCode` 2; Windows/MSIX `1.0.0.0`.
 
 SHA-256 do MSIX em `entregas/` e em `docs/downloads/`:
 
@@ -150,9 +155,10 @@ DE45BB04A5F05D29C89075D39C75A2E5845EA5995798A1686ED54DED831FBBD8
 SHA-256 dos artefatos Android desta build (recalculados a cada build):
 
 ```text
-AAB ............... CA7642A93A46E12C05C04F143CF183F44576CF7D789EFBFE9A823224395FD7FB
-APK release ....... 85CCC0BCBB19C8D9CE1CFD3AA9AB0FAB58A3C29EFFFAAF611FC9A8C11A5B0DA2
-APK universal ..... 99CE19D123A789C95FF42B9CA2B3E9A1F86C1654FEF42078EE5E3A81C1AB8899
+AAB ............... F05A4F985A6CFA2A8BB7397D90EE80E5351911C2DCA64878F993CCF997EED9DC
+APK release ....... 857C42E70AE5EE9DB188CAC7B99256BF12DED1B9E63DE50EFD70BBBE986A5E2B
+APK universal ..... 85045C9A1D8C14FDD3CF5155B07E85AD1D58739FB28E31BEB6B1C9E7127D08D1
+mapping.txt ....... 59E4241489A55722572724D9F037FB76FE3335CCB1CBD1C7BC137FBDB79E47C5
 ```
 
 O AAB do Google Play é gerado em `android/app/build/outputs/bundle/release/app-release.aab`. O `mapping.txt` do R8 fica em `android/app/build/outputs/mapping/release/mapping.txt` e deve ser guardado com o AAB. O APK universal é gerado a partir do AAB com `bundletool` para teste no aparelho; ele é assinado com a upload key local e só autentica no Google se o SHA-1 dessa chave estiver cadastrado no cliente OAuth Android.
@@ -169,7 +175,7 @@ Identidade Android:
 
 - Pacote: `horizonte.de.cuidado`
 - `minSdk 24`, `targetSdk 36`
-- Cliente OAuth Android do projeto `horizonte-de-cuidado` (sem segredo no APK/AAB)
+- Clientes OAuth Android do projeto `horizonte-de-cuidado` para a upload key e o Play App Signing (sem segredo no APK/AAB)
 
 ## Links
 
@@ -178,17 +184,18 @@ Identidade Android:
 - Repositório: <https://github.com/wavizo-bot/Horizonte-de-cuidado>
 - [Documentos legais](docs/politica-de-privacidade.html)
 - [Suporte](docs/suporte.html)
-- Microsoft Store: ID `9NFVH4GZLNJF`; pacote ainda não enviado ao Partner Center.
+- Microsoft Store: <https://apps.microsoft.com/detail/9NFVH4GZLNJF> (deep link: <ms-windows-store://pdp/?productid=9NFVH4GZLNJF>)
 - Google Play: envio pendente; pacote `horizonte.de.cuidado`.
 
 ## Publicação
 
 A ficha do Google Play é gerada localmente em `entregas/play/` por `node tools/make-play-assets.mjs` (pasta ignorada pelo git). Ela contém textos, ícone, feature graphic, seis capturas de telefone e seis de tablet, respostas de segurança de dados, classificação de conteúdo e checklist de envio.
 
+- Windows/MSIX publicado na Microsoft Store em 29/10/2026: ID `9NFVH4GZLNJF`.
 - Política de privacidade pública: <https://wavizo-bot.github.io/Horizonte-de-cuidado/politica-de-privacidade.html>
 - Suporte público: <https://wavizo-bot.github.io/Horizonte-de-cuidado/suporte.html>
 - Classificação de conteúdo sugerida: Livre; público-alvo: 18+ (profissionais).
-- O envio ao Play Console e ao Microsoft Partner Center depende das credenciais dos respectivos consoles; não há credenciais de publicação no repositório.
+- O envio ao Play Console depende das credenciais do console; o MSIX já está publicado na Microsoft Store. Não há credenciais de publicação no repositório.
 
 ## Contato
 

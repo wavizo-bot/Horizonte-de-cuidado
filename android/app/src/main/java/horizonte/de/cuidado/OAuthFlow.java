@@ -119,6 +119,7 @@ final class OAuthFlow {
 
         String scopes = scopeString(signIn);
         try {
+            Log.i(TAG, "Obtendo token Google para " + account.name);
             String token = GoogleAuthUtil.getToken(ctx, account, scopes);
             TokenInfo info = verifyToken(token);
             accessToken = token;
@@ -129,9 +130,11 @@ final class OAuthFlow {
                 if ((mail == null || mail.isEmpty()) && signIn != null) mail = signIn.getEmail();
                 if (mail != null && !mail.isEmpty()) store.setEmail(mail);
             }
+            Log.i(TAG, "Token Google validado com o escopo drive.appdata");
             return token;
         } catch (UserRecoverableAuthException e) {
             store.clearToken();
+            Log.w(TAG, "O Google pediu consentimento adicional", e);
             throw new AuthError("A autorização do Google precisa ser renovada. "
                     + "Toque em Conectar Google Drive e conclua o login.");
         } catch (GoogleAuthException e) {
@@ -140,6 +143,7 @@ final class OAuthFlow {
             throw new AuthError("Não foi possível renovar o acesso ao Google. "
                     + "Entre novamente com a conta Google.");
         } catch (IOException e) {
+            Log.w(TAG, "Falha de rede ao obter o token Google", e);
             throw new AuthError("Sem conexão com o Google. Verifique a internet e tente de novo.");
         }
     }
@@ -168,9 +172,12 @@ final class OAuthFlow {
             } catch (AuthError e) {
                 // Conta antiga sem autorização válida: pede o consentimento
                 // novamente em vez de manter a UI "conectada" sem funcionar.
+                Log.w(TAG, "Sessão antiga inválida; pedindo login novamente", e);
                 store.clear();
             }
         }
+
+        Log.i(TAG, "Abrindo seletor de contas do Google");
 
         final CountDownLatch latch = new CountDownLatch(1);
         final AtomicReference<GoogleSignInAccount> accountRef = new AtomicReference<>();
@@ -193,8 +200,10 @@ final class OAuthFlow {
 
             boolean done = latch.await(LOGIN_TIMEOUT_MS, TimeUnit.MILLISECONDS);
             if (!done) {
+                Log.w(TAG, "Tempo esgotado esperando o onActivityResult do Google Sign-In");
                 throw new AuthError("O login expirou. Toque em Conectar Google Drive e tente novamente.");
             }
+            Log.i(TAG, "Resultado do seletor de contas recebido");
             Exception failure = failureRef.get();
             if (failure != null) {
                 Log.w(TAG, "Falha no login Google", failure);
@@ -210,6 +219,7 @@ final class OAuthFlow {
             }
 
             String mail = account.getEmail();
+            Log.i(TAG, "Conta Google escolhida: " + mail);
             if (mail != null && !mail.isEmpty()) store.setEmail(mail);
 
             // Confere o escopo concedido antes de considerar o login concluído.
@@ -238,6 +248,9 @@ final class OAuthFlow {
     boolean onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode != REQ_SIGN_IN) return false;
 
+        Log.i(TAG, "onActivityResult do login: resultCode=" + resultCode
+                + ", data=" + (data != null));
+
         CountDownLatch latch;
         AtomicReference<GoogleSignInAccount> accountRef;
         AtomicReference<Exception> failureRef;
@@ -246,34 +259,71 @@ final class OAuthFlow {
             accountRef = loginAccount;
             failureRef = loginFailure;
         }
-        if (latch == null) return true;
 
+        GoogleSignInAccount account = null;
+        Exception failure = null;
         try {
             if (data == null) {
                 throw new AuthError("Login cancelado.");
             }
-            GoogleSignInAccount account = GoogleSignIn
+            account = GoogleSignIn
                     .getSignedInAccountFromIntent(data)
                     .getResult(ApiException.class);
             if (account == null) throw new AuthError("Login não concluído. Tente novamente.");
-            accountRef.set(account);
+            Log.i(TAG, "Conta recebida do Google: " + account.getEmail()
+                    + "; escopos=" + account.getGrantedScopes());
         } catch (ApiException e) {
-            if (e.getStatusCode() == SIGN_IN_CANCELLED) {
-                failureRef.set(new AuthError("Login cancelado."));
-            } else if (e.getStatusCode() == SIGN_IN_DEVELOPER_ERROR) {
-                failureRef.set(new AuthError("O Google não reconhece este aplicativo. "
-                        + "O pacote e o SHA-1 do APK precisam estar cadastrados no cliente "
-                        + "OAuth Android do projeto."));
-            } else {
-                failureRef.set(new AuthError("O Google recusou o login (código "
-                        + e.getStatusCode() + "). Tente novamente."));
-            }
+            Log.w(TAG, "Google Sign-In recusou o login: código " + e.getStatusCode(), e);
+            failure = authError(e);
         } catch (Exception e) {
-            failureRef.set(e);
-        } finally {
+            Log.w(TAG, "Falha ao ler o resultado do Google Sign-In", e);
+            failure = e;
+        }
+
+        if (latch != null) {
+            if (account != null) {
+                accountRef.set(account);
+            } else {
+                failureRef.set(failure);
+            }
             latch.countDown();
+            return true;
+        }
+
+        // A Activity pode ter sido recriada enquanto o seletor estava aberto.
+        // Nesse caso o latch e o WebView antigos não existem mais; persistir a
+        // conta/token permite que o app recarregado encontre a sessão.
+        if (account != null) {
+            final GoogleSignInAccount chosen = account;
+            Thread resume = new Thread(() -> {
+                try {
+                    String mail = chosen.getEmail();
+                    if (mail != null && !mail.isEmpty()) store.setEmail(mail);
+                    accessToken();
+                    Log.i(TAG, "Login concluído após recriação da Activity");
+                } catch (Exception e) {
+                    Log.w(TAG, "Falha ao concluir login após recriação da Activity", e);
+                }
+            }, "HorizonteOAuth-resume");
+            resume.setDaemon(true);
+            resume.start();
+        } else if (failure != null) {
+            Log.w(TAG, "Resultado de login sem waiter: " + failure.getMessage());
         }
         return true;
+    }
+
+    private static AuthError authError(ApiException e) {
+        if (e.getStatusCode() == SIGN_IN_CANCELLED) {
+            return new AuthError("Login cancelado.");
+        }
+        if (e.getStatusCode() == SIGN_IN_DEVELOPER_ERROR) {
+            return new AuthError("O Google não reconhece este aplicativo. "
+                    + "O pacote e o SHA-1 do APK precisam estar cadastrados no cliente "
+                    + "OAuth Android do projeto.");
+        }
+        return new AuthError("O Google recusou o login (código "
+                + e.getStatusCode() + "). Tente novamente.");
     }
 
     void signOut() {

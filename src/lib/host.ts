@@ -164,8 +164,10 @@ export async function driveState(): Promise<DriveState> {
 export async function driveLogin(): Promise<DriveState> {
   return (
     (await driveJson<DriveState>("DriveLogin")) ?? {
+      // O host existe (o botão só habilita com ele), então uma resposta vazia
+      // não significa "nuvem não configurada": é falha/cancelamento do login.
       ok: false,
-      configured: false,
+      configured: true,
       signedIn: false,
       error: "Login cancelado ou sem resposta.",
     }

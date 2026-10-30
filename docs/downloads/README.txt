@@ -1,6 +1,15 @@
 PACOTE DE DEMONSTRAÇÃO — HORIZONTE DE CUIDADO
 ============================================
 
+RECOMENDADO: instale pela Microsoft Store:
+https://apps.microsoft.com/detail/9NFVH4GZLNJF
+
+No Windows, o link direto para o aplicativo da Store é:
+ms-windows-store://pdp/?productid=9NFVH4GZLNJF
+
+A Store assina e atualiza o pacote automaticamente. Os arquivos abaixo são
+para instalação offline ou em rede restrita.
+
 Arquivos nesta pasta:
 
 - HorizonteDeCuidado_1.0.0.0_x64.msix

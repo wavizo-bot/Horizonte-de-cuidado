@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -26,6 +27,7 @@ import java.util.List;
  */
 final class DriveHost {
 
+    private static final String TAG = "HorizonteDrive";
     private static final String DRIVE_SCOPE =
             "https://www.googleapis.com/auth/drive.appdata";
 
@@ -82,17 +84,20 @@ final class DriveHost {
             return error("Já existe um login em andamento.");
         }
         try {
+            Log.i(TAG, "DriveLogin iniciado");
             OAuthFlow f = oauth();
             // signIn já reaproveita uma sessão válida e só abre o seletor de
             // contas do Android quando precisa de novo consentimento.
             f.signIn(activity);
             f.ensureSession();
             String email = f.email();
+            Log.i(TAG, "DriveLogin concluído: " + email);
             toast(email == null || email.isEmpty()
                     ? "Conta Google conectada."
                     : "Conectado: " + email);
             return signedIn(email);
         } catch (Exception e) {
+            Log.w(TAG, "DriveLogin falhou: " + message(e), e);
             return loginError(message(e));
         } finally {
             loginBusy = false;
@@ -246,7 +251,7 @@ final class DriveHost {
      * troque a mensagem real (cancelamento, SHA-1, rede) por um aviso de
      * configuração ausente.
      */
-    private static String loginError(String message) {
+    static String loginError(String message) {
         try {
             JSONObject o = new JSONObject();
             o.put("ok", false);

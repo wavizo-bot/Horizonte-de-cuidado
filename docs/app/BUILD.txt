@@ -1,2 +1,2 @@
-Build de produção copiado de dist/ em 2026-10-30T01:44:17.573Z.
+Build de produção copiado de dist/ em 2026-10-30T02:27:44.904Z.
 Não editar arquivos gerados à mão; rode pnpm build.

@@ -39,7 +39,8 @@
     "softwareVersion": "1.0.0",
     "description": "Ferramenta independente de organização de encaminhamentos, filas, agenda e comunicação para equipes de saúde mental.",
     "offers": { "@type": "Offer", "price": "0", "priceCurrency": "BRL" },
-    "url": "https://wavizo-bot.github.io/Horizonte-de-cuidado/"
+    "url": "https://wavizo-bot.github.io/Horizonte-de-cuidado/",
+    "installUrl": "https://apps.microsoft.com/detail/9NFVH4GZLNJF"
   }
   </script>
 </head>
@@ -410,7 +411,7 @@
           </details>
           <details>
             <summary>Como instalo o aplicativo no Windows?</summary>
-            <p>Baixe o pacote <code>.msix</code> e o certificado público <code>.cer</code> da mesma versão. O certificado de teste precisa ser confiável no computador; em muitos ambientes isso exige administrador. Depois, abra o <code>.msix</code>. Em produção, a Microsoft Store reassina o pacote.</p>
+            <p>O caminho recomendado é a Microsoft Store: abra a ficha do Horizonte de Cuidado, clique em Instalar e receba as atualizações assinadas pela Microsoft. Para instalação offline ou em rede restrita, baixe o pacote <code>.msix</code> e o certificado público <code>.cer</code> da mesma versão; o certificado de teste precisa ser confiável no computador, o que em muitos ambientes exige administrador. Depois, abra o <code>.msix</code>.</p>
           </details>
           <details>
             <summary>Como instalo no Android?</summary>
@@ -454,11 +455,18 @@
           <p class="eyebrow" style="color:var(--sand)">Baixe o aplicativo</p>
           <h2>Leve o Horizonte para a sua equipe.</h2>
           <p>
-            Pacote MSIX 1.0.0.0 para Windows x64, com dados fictícios de demonstração. O backup
-            opcional no Google Drive usa a conta do próprio usuário, com escopo mínimo e consentimento
-            explícito; todas as funções locais continuam disponíveis sem login.
+            O Horizonte de Cuidado já está publicado na Microsoft Store para Windows 10/11 x64.
+            Instale pela loja para receber atualizações assinadas pela Microsoft. O pacote MSIX
+            direto continua disponível para instalação offline. O backup opcional no Google Drive
+            usa a conta do próprio usuário, com escopo mínimo e consentimento explícito; todas as
+            funções locais continuam disponíveis sem login.
           </p>
+          <div class="download__store">
+            <a class="button" href="https://apps.microsoft.com/detail/9NFVH4GZLNJF">Instalar pela Microsoft Store</a>
+            <a class="button button--ghost" href="ms-windows-store://pdp/?productid=9NFVH4GZLNJF">Abrir no app da Store</a>
+          </div>
           <div class="download__meta">
+            <span>Microsoft Store</span>
             <span>MSIX · x64</span>
             <span>≈ 1 MB</span>
             <span>Windows 10 1809+</span>
@@ -467,23 +475,23 @@
           </div>
         </div>
         <div class="download__card">
-          <h3>Instalar em 3 passos</h3>
+          <h3>Instalação offline (MSIX)</h3>
           <ol>
             <li>Baixe o <code>.msix</code> e o certificado público <code>.cer</code>.</li>
             <li>Confie no certificado de teste (pode exigir administrador).</li>
             <li>Abra o <code>.msix</code> e conclua a instalação.</li>
           </ol>
           <div class="download__actions">
-            <a class="button" href="downloads/HorizonteDeCuidado_1.0.0.0_x64.msix">Baixar MSIX</a>
+            <a class="button button--ghost" href="downloads/HorizonteDeCuidado_1.0.0.0_x64.msix">Baixar MSIX</a>
             <a class="button button--ghost" href="downloads/HorizonteDeCuidado-dev.cer">Baixar certificado</a>
             <a class="button button--ghost" href="app/">Testar no navegador</a>
             <a class="button button--ghost" href="https://github.com/wavizo-bot/Horizonte-de-cuidado">Ver no GitHub</a>
           </div>
           <p class="download__note">
-            A demonstração web usa dados fictícios e não acessa o Google Drive. Os pacotes Windows e
-            Android são as versões completas para uso local com backup opcional. Certificado de teste,
-            uso local: a Microsoft Store reassina o pacote em produção. Não instale certificados de
-            origem desconhecida. Em ambiente institucional, prefira Intune/GPO ou a Store. A versão
+            Prefira a Microsoft Store para receber atualizações automaticamente. O MSIX direto é
+            assinado com certificado de teste e exige confiar no certificado; use apenas para
+            instalação offline ou em rede restrita. A demonstração web usa dados fictícios e não
+            acessa o Google Drive. Em ambiente institucional, prefira Intune/GPO ou a Store. A versão
             Android será distribuída pelo Google Play.
           </p>
         </div>

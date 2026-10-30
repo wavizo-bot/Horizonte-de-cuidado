@@ -28,27 +28,41 @@ Nome final: Horizonte de Cuidado.
 Sugestões apresentadas: Horizonte de Cuidado, Fila Viva, Cuidado em Rede,
 Agenda Acolhe e Ponte do Cuidado.
 
-Windows/MSIX (identidade reservada no Microsoft Partner Center):
+Windows/MSIX (publicado na Microsoft Store em 29/10/2026):
 - Nome do pacote: wavizo.Horizontedecuidado
 - Publisher: CN=57BB464E-553F-45B6-A4ED-B253157408EB
 - Publisher display name: wavizo
 - Package Family Name: wavizo.Horizontedecuidado_c5p81jb0en0bm
 - Package SID: S-1-15-2-2436126619-3688890967-1744903539-3021524084-939996415-1921275128-3282777485
 - Store ID: 9NFVH4GZLNJF
+- Store web: https://apps.microsoft.com/detail/9NFVH4GZLNJF
+- Deep link: ms-windows-store://pdp/?productid=9NFVH4GZLNJF
 - Versão: 1.0.0.0
 - Aplicativo: HorizonteDeCuidado
 - Executável: HorizonteDeCuidado.exe
 
 Android (em preparação para o Google Play):
 - Pacote: horizonte.de.cuidado
-- versionName: 1.0.0; versionCode: 1 (android/version-code.txt)
+- versionName: 1.0.0; versionCode: 2 (android/version-code.txt)
 - minSdk 24 (Android 7.0); compileSdk/targetSdk 36
 - Assinatura local: upload key em android/keystore/horizonte-upload.keystore
 - SHA-1 da upload key: 35:14:75:E6:C6:E1:EE:F8:DF:3F:5D:03:70:C5:DC:5C:A1:B8:74:F6
 - SHA-1 do certificado público do Play App Signing:
   12:5B:4F:5D:22:58:61:40:7C:59:12:FD:B4:52:29:E5:37:F7:72:D8
-- Cliente OAuth Android do projeto "horizonte-de-cuidado":
-  78293254115-1udh0d71f17747uhifilv51nbpkad95r (sem segredo no APK/AAB).
+- Clientes OAuth Android do projeto "horizonte-de-cuidado" (sem segredo no
+  APK/AAB; o app não envia client_id, o Google casa pacote + SHA-1):
+  - 78293254115-1udh0d71f17747uhifilv51nbpkad95r: SHA-1 do Play App Signing.
+  - 78293254115-c9dnpojkns23rkkea6kj5m5g6jclk0u3: SHA-1 da upload key local.
+  Também é válido manter as duas impressões digitais em um único cliente
+  Android; o Google aceita mais de um SHA-1 por cliente.
+- O SHA-1 da upload key NÃO aparece no Play Console: o console mostra apenas o
+  SHA-1 do App Signing (a chave com que o Google reassina o AAB). Para obter o
+  da upload key, rodar em android/:
+    .\gradlew.bat signingReport
+  ou:
+    apksigner verify --print-certs app\build\outputs\apk\release\app-release.apk
+  O resultado desta máquina é 35:14:75:E6:C6:E1:EE:F8:DF:3F:5D:03:70:C5:DC:5C:A1:B8:74:F6
+  (SHA-256 E8:76:51:D4:BF:D2:52:AF:E2:83:81:CD:44:6B:11:02:39:78:D2:12:0A:92:69:F2:33:7F:3B:55:63:E2:93:D2).
 
 O nome do pacote no AppxManifest.xml usa a grafia exata fornecida pelo Partner
 Center. A pasta de trabalho atual é "Horizonte de Cuidado".
@@ -253,17 +267,29 @@ LEIA-ME.txt de upload (ignorada pelo git); os hashes estão na seção 15.
   existe mas o login foi cancelado/expirado; a UI não deve mostrar "não
   configurada" nesse caso.
 
-BLOQUEIO ATUAL DO ANDROID:
-O login nativo abre o seletor de contas, mas retorna ApiException 10
-(DEVELOPER_ERROR). O cliente OAuth Android fornecido não reconhece o pacote
-horizonte.de.cuidado + SHA-1 da upload key. O certificado público do Play
-(certificados-play/deployment_cert.der) tem SHA-1
-12:5B:4F:5D:22:58:61:40:7C:59:12:FD:B4:52:29:E5:37:F7:72:D8, provavelmente o
-hash cadastrado. Para testar o APK local, cadastrar o SHA-1 da upload key
-35:14:75:E6:C6:E1:EE:F8:DF:3F:5D:03:70:C5:DC:5C:A1:B8:74:F6 no mesmo cliente
-Android no Google Cloud Console. Para a build do Play, instalar o AAB pelo
-teste interno e validar com o SHA-1 do Play App Signing. Sem isso, o Drive
-não pode ser concluído no Android; as funções locais seguem funcionando.
+LOGIN ANDROID RESOLVIDO (versionCode 2):
+- Causa 1: o MainActivity usava android:launchMode="singleTask". Nesse modo o
+  Google Sign-In perde o onActivityResult: o seletor de contas abre, a conta é
+  escolhida, o seletor fecha e o app fica sem resposta. O manifesto foi
+  alterado para singleTop, que mantém a Activity na tarefa normal.
+- Causa 2: depois de corrigir o retorno, o Google passou a devolver
+  ApiException 10 (DEVELOPER_ERROR). O cliente OAuth ...1udh0d71... tinha
+  apenas o SHA-1 do Play App Signing (12:5B:4F...). O APK local é assinado
+  com a upload key (35:14:75...), cujo SHA-1 não aparece no Play Console.
+  Foi criado o cliente Android ...c9dnpojk... com essa impressão digital; o
+  Google casa pacote + SHA-1, então o app não precisa enviar client_id.
+- O fluxo ganhou logs com as tags HorizonteOAuth e HorizonteDrive, tratamento
+  do resultado quando a Activity foi recriada (sem latch/WebView antigos) e
+  catch(Throwable) na HostBridge para não deixar a Promise pendurada.
+- APK de teste: entregas/android/horizonte-1.0.0-vc2.apk, versionCode 2,
+  SHA-256 857C42E70AE5EE9DB188CAC7B99256BF12DED1B9E63DE50EFD70BBBE986A5E2B.
+- Teste em 29/10/2026 no telefone 25069PTEBG (Android 16/API 36): o seletor
+  abriu, a conta wyj.juridico@gmail.com foi escolhida, o onActivityResult
+  voltou com resultCode=-1, o token drive.appdata foi validado e o DriveLogin
+  concluiu. A tela mostrou "Conectado" e "Última sincronização em 29/10/2026,
+  23:43:22".
+- Ainda falta testar a restauração (apagar os dados locais e puxar da nuvem)
+  e validar a build assinada pelo Play com o SHA-1 do App Signing.
 
 11. DOCUMENTOS LEGAIS E LANDING
 -------------------------------
@@ -353,6 +379,9 @@ Testes Android realizados:
   clientWidth=370; aba "Nuvem" visível.
 - Login nativo abre o seletor de contas do Google; a conclusão está bloqueada
   pelo DEVELOPER_ERROR 10 descrito na seção 10.
+- Correção do singleTask compilada no APK versionCode 2
+  (entregas/android/horizonte-1.0.0-vc2.apk), com singleTop e logs; o teste no
+  aparelho ainda precisa ser repetido.
 - Teste de cancelamento no APK universal final (SHA-256 99CE19...): Ajustes >
   Nuvem > Conectar Google Drive > Voltar. O status permaneceu "Pronto para
   conectar" e o aviso foi "Login cancelado.", sem "Nuvem não configurada" e
@@ -409,11 +438,13 @@ Build Android verificada:
 
 15. VERSÕES E HASHES
 --------------------
-- Android 1.0.0 (versionCode 1) — primeira versão Android, telefone/tablet,
-  retrato/paisagem, OAuth nativo, Drive opcional, R8 full mode.
-- Windows/MSIX 1.0.0.0 — demonstração local, MSIX assinado com certificado de
-  teste, landing, documentos legais e demonstração web. Nuvem com cliente
-  OAuth Desktop; backup opcional. Não enviada ao Partner Center.
+- Android 1.0.0 (versionCode 2) — correção do login Google (singleTop +
+  SHA-1 da upload key), telefone/tablet, retrato/paisagem, OAuth nativo, Drive
+  opcional, R8 full mode. Login + backup validados no telefone 25069PTEBG.
+- Windows/MSIX 1.0.0.0 — publicado na Microsoft Store em 29/10/2026 (ID
+  9NFVH4GZLNJF); MSIX local assinado com certificado de teste, landing,
+  documentos legais e demonstração web. Nuvem com cliente OAuth Desktop;
+  backup opcional.
 
 SHA-256 desta build:
   MSIX .............. DE45BB04A5F05D29C89075D39C75A2E5845EA5995798A1686ED54DED831FBBD8
@@ -453,7 +484,14 @@ APK são artefatos locais; o AAB é o arquivo a enviar ao Play.
   depois do build Android, o BUILD.txt muda e o pacote deixa de ser idêntico.
   Rebuildar o Android por último ou repetir assembleRelease/bundleRelease.
 - Android: o APK local só autentica no Google se o SHA-1 da upload key estiver
-  no cliente OAuth Android; a build do Play usa o SHA-1 do Play App Signing.
+  em um cliente OAuth Android do projeto; a build do Play usa o SHA-1 do Play
+  App Signing. O Play Console mostra SOMENTE o SHA-1 do App Signing; o da
+  upload key sai de `.\gradlew.bat signingReport` ou
+  `apksigner verify --print-certs`. Podem ser dois clientes Android ou um
+  cliente com as duas impressões digitais.
+- Android: launchMode="singleTask" ou "singleInstance" na Activity que chama o
+  Google Sign-In faz o seletor de contas voltar sem onActivityResult. Usar
+  singleTop ou standard; o sintoma é o seletor fechar sem login nem erro.
 - Android: o telefone pode cair do ADB sem fio; reconectar com
   adb pair/adb connect antes dos testes finais.
 - Emulador caderno_phone não inicia com aceleração (virtualização desativada
@@ -464,17 +502,17 @@ APK são artefatos locais; o AAB é o arquivo a enviar ao Play.
 
 17. PENDÊNCIAS
 --------------
-1. Cadastrar o SHA-1 da upload key no cliente OAuth Android (Google Cloud
-   Console) OU enviar o AAB ao Play/teste interno e instalar a build assinada
-   pelo Play; então concluir login + backup + restauração no Android.
+1. Login + backup Android concluídos no APK vc2 assinado com a upload key.
+   Falta testar a restauração da nuvem e validar o AAB vc2 no teste interno do
+   Play com o SHA-1 do App Signing.
 2. Teste de cancelamento concluído no APK universal final; reinstalar o APK
    final em outros aparelhos de teste quando necessário.
 3. Testar em tablet físico, retrato e paisagem.
 4. Revisar os textos legais com o responsável; os documentos já estão
    publicados nas URLs públicas.
-5. Testar a instalação AppX do MSIX final em sessão elevada (certificado em
-   LocalMachine\TrustedPeople) e enviar ao Partner Center; o envio depende das
-   credenciais do console.
+5. MSIX publicado na Microsoft Store em 29/10/2026 (ID 9NFVH4GZLNJF).
+   Falta testar a instalação AppX local em sessão elevada (certificado em
+   LocalMachine\TrustedPeople) e o fluxo de atualização pela Store.
 6. Criar o app no Play Console, preencher a ficha (já preparada em
    entregas/play/), a segurança de dados, a classificação, o público-alvo e a
    URL de privacidade; enviar o AAB. Depende das credenciais do console.
