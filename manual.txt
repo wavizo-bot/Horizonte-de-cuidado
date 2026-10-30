@@ -1,9 +1,10 @@
 HORIZONTE DE CUIDADO — MANUAL DE RETOMADA
 =========================================
-Atualizado em: 29/10/2026
-Versão do aplicativo: 1.0.0 (Android versionCode 1) / 1.0.0.0 (MSIX)
-Status: Windows/MSIX e Android construídos e testados localmente; publicação
-nas lojas, revisão legal e login Android de ponta a ponta ainda pendentes.
+Atualizado em: 30/10/2026
+Versão do aplicativo: 1.0.0 (Android versionCode 2) / 1.0.0.0 (MSIX)
+Status: Windows/MSIX publicado na Microsoft Store e validado; Android com
+login Google/Drive validado no telefone. Faltam o envio ao Play, o teste em
+tablet físico, a revisão legal e ajustes da ficha no Partner Center.
 
 1. O QUE É
 ----------
@@ -41,7 +42,7 @@ Windows/MSIX (publicado na Microsoft Store em 29/10/2026):
 - Aplicativo: HorizonteDeCuidado
 - Executável: HorizonteDeCuidado.exe
 
-Android (em preparação para o Google Play):
+Android (AAB vc2 pronto; envio ao Google Play pendente):
 - Pacote: horizonte.de.cuidado
 - versionName: 1.0.0; versionCode: 2 (android/version-code.txt)
 - minSdk 24 (Android 7.0); compileSdk/targetSdk 36
@@ -223,7 +224,7 @@ O release usa R8 full mode, proguard-android-optimize.txt, shrinkResources,
 O AAB desta build tem isOptimizationsEnabled=true no
 BUNDLE-METADATA/com.android.tools/r8.json. O mapping.txt local é idêntico ao
 proguard.map embutido no AAB (SHA-256
-254128C01FA70A21C54F9DC5E0E8C1087F245C2BE57604F6D866EDB69356990D).
+59E4241489A55722572724D9F037FB76FE3335CCB1CBD1C7BC137FBDB79E47C5).
 
 O Gradle copia docs/app/ para android/app/src/main/assets/app/ antes de cada
 build. O pacote deve ficar idêntico ao fonte (regra A5); a última verificação
@@ -287,8 +288,9 @@ LOGIN ANDROID RESOLVIDO (versionCode 2):
   abriu, a conta de teste foi escolhida, o onActivityResult voltou com
   resultCode=-1, o token drive.appdata foi validado e o DriveLogin concluiu.
   A tela mostrou "Conectado" e "Última sincronização em 29/10/2026, 23:43:22".
-- Ainda falta testar a restauração (apagar os dados locais e puxar da nuvem)
-  e validar a build assinada pelo Play com o SHA-1 do App Signing.
+- Restauração conferida no app Windows com a mesma conta: 12 pacientes e
+  sincronização às 08:25:48 de 30/10/2026. Ainda falta o teste destrutivo no
+  Android e validar a build assinada pelo Play com o SHA-1 do App Signing.
 
 11. DOCUMENTOS LEGAIS E LANDING
 -------------------------------
@@ -358,7 +360,7 @@ publicação nesta máquina; nenhuma credencial de console é versionada.
 ------------------------
   pnpm check              # TypeScript: sem erros
   pnpm test               # 33 testes em 3 arquivos: todos passaram
-  pnpm check:privacy      # 101 arquivos públicos; nenhum dado real
+  pnpm check:privacy      # 134 arquivos públicos; nenhum dado real
   pnpm build              # build de produção + docs/app/
   node tools\visual-check.mjs   # QA visual com Playwright/Edge
   node tools\check-site.mjs     # landing: links, imagens, overflow, console
@@ -376,15 +378,14 @@ Testes Android realizados:
   WhatsApp e tel: (discador com +55 11 99000-0001) testados.
 - Aba ativa do menu móvel: scrollLeft=199.38, scrollWidth=619,
   clientWidth=370; aba "Nuvem" visível.
-- Login nativo abre o seletor de contas do Google; a conclusão está bloqueada
-  pelo DEVELOPER_ERROR 10 descrito na seção 10.
-- Correção do singleTask compilada no APK versionCode 2
-  (entregas/android/horizonte-1.0.0-vc2.apk), com singleTop e logs; o teste no
-  aparelho ainda precisa ser repetido.
-- Teste de cancelamento no APK universal final (SHA-256 99CE19...): Ajustes >
+- Login nativo concluído no APK versionCode 2
+  (entregas/android/horizonte-1.0.0-vc2.apk): seletor de contas,
+  onActivityResult com resultCode=-1, token drive.appdata e tela "Conectado".
+- Teste de cancelamento no APK universal vc1 (SHA-256 99CE19...): Ajustes >
   Nuvem > Conectar Google Drive > Voltar. O status permaneceu "Pronto para
   conectar" e o aviso foi "Login cancelado.", sem "Nuvem não configurada" e
-  sem a mensagem antiga de falha ao abrir o seletor.
+  sem a mensagem antiga de falha ao abrir o seletor. O web app é o mesmo no
+  vc2.
 - APK universal gerado do AAB, assinado com a upload key e instalado; o app
   abriu normalmente.
 - WebView debugging desativado no release; testes de UI no release são feitos
@@ -410,9 +411,13 @@ Testes Windows/MSIX realizados:
   diretamente: janela "Horizonte de Cuidado" aberta, WebView2 renderizando a
   tela Hoje e processo respondendo; fechamento normal. Falta apenas o teste de
   instalação AppX registrada em sessão elevada.
+- Instalação pela Microsoft Store validada em 30/10/2026 com winget: pacote
+  wavizo.Horizontedecuidado_1.0.0.0_x64, SignatureKind Store; a janela abriu,
+  o WebView2 renderizou a tela Hoje e Ajustes > Nuvem mostrou "Conectado",
+  12 pacientes e sincronização às 08:29:56.
 
 Build Android verificada:
-- versionCode=1, versionName=1.0.0, minSdk=24, targetSdk=36.
+- versionCode=2, versionName=1.0.0, minSdk=24, targetSdk=36.
 - R8 full mode: isOptimizationsEnabled=true, isObfuscationEnabled=true,
   isShrinkingEnabled=true; minApiLevel=24.
 - mapping.txt local idêntico ao proguard.map do AAB.
@@ -450,10 +455,13 @@ Build Android verificada:
 
 SHA-256 desta build:
   MSIX .............. DE45BB04A5F05D29C89075D39C75A2E5845EA5995798A1686ED54DED831FBBD8
-  AAB ............... CA7642A93A46E12C05C04F143CF183F44576CF7D789EFBFE9A823224395FD7FB
-  APK release ....... 85CCC0BCBB19C8D9CE1CFD3AA9AB0FAB58A3C29EFFFAAF611FC9A8C11A5B0DA2
-  APK universal ..... 99CE19D123A789C95FF42B9CA2B3E9A1F86C1654FEF42078EE5E3A81C1AB8899
-  mapping.txt ....... 254128C01FA70A21C54F9DC5E0E8C1087F245C2BE57604F6D866EDB69356990D
+  AAB ............... F05A4F985A6CFA2A8BB7397D90EE80E5351911C2DCA64878F993CCF997EED9DC
+  APK release ....... 857C42E70AE5EE9DB188CAC7B99256BF12DED1B9E63DE50EFD70BBBE986A5E2B
+  APK universal ..... 85045C9A1D8C14FDD3CF5155B07E85AD1D58739FB28E31BEB6B1C9E7127D08D1
+  mapping.txt ....... 59E4241489A55722572724D9F037FB76FE3335CCB1CBD1C7BC137FBDB79E47C5
+
+A build vc1 anterior tinha AAB CA7642..., APK release 85CCC0..., APK universal
+99CE19... e mapping 254128...; não usar esses arquivos no próximo envio.
 
 O MSIX em docs/downloads/ é o mesmo de entregas/ (mesmo SHA-256). O AAB e o
 APK são artefatos locais; o AAB é o arquivo a enviar ao Play.
@@ -505,10 +513,12 @@ APK são artefatos locais; o AAB é o arquivo a enviar ao Play.
 17. PENDÊNCIAS
 --------------
 1. Login + backup Android concluídos no APK vc2 assinado com a upload key.
-   Falta testar a restauração da nuvem e validar o AAB vc2 no teste interno do
+   Restauração conferida no app Windows com a mesma conta (12 pacientes).
+   Falta o teste destrutivo no Android e validar o AAB vc2 no teste interno do
    Play com o SHA-1 do App Signing.
-2. Teste de cancelamento concluído no APK universal final; reinstalar o APK
-   final em outros aparelhos de teste quando necessário.
+2. Teste de cancelamento concluído no APK universal vc1; o web app é o mesmo
+   no vc2. Reinstalar o APK final em outros aparelhos de teste quando
+   necessário.
 3. Testar em tablet físico, retrato e paisagem.
 4. Revisar os textos legais com o responsável; os documentos já estão
    publicados nas URLs públicas.
@@ -519,9 +529,10 @@ APK são artefatos locais; o AAB é o arquivo a enviar ao Play.
    Corrigir no Partner Center a URL de privacidade (hoje aponta para um blob
    do GitHub, que mostra o código-fonte) para a URL do Pages e a grafia do
    nome para "Horizonte de Cuidado".
-6. Criar o app no Play Console, preencher a ficha (já preparada em
-   entregas/play/), a segurança de dados, a classificação, o público-alvo e a
-   URL de privacidade; enviar o AAB. Depende das credenciais do console.
+6. No Play Console, enviar o AAB vc2 ao teste interno, preencher/confirmar a
+   ficha (entregas/play/), a segurança de dados, a classificação, o
+   público-alvo e a URL de privacidade; instalar a build assinada pelo Play e
+   repetir login + backup. Depende das credenciais do console.
 7. Manter docs/app/ gerado do mesmo commit da landing e testar /app/ antes de
    cada publicação.
 8. Rodar pnpm check:privacy antes de cada commit público.
