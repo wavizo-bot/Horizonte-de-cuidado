@@ -68,13 +68,20 @@
         <tr><td>Informações de cuidado</td><td>Data e motivo do encaminhamento, equipe de origem, data de triagem/matriciamento, modelo de cuidado, prioridade e justificativa, observações e anotações.</td></tr>
         <tr><td>Agenda e comunicação</td><td>Atendimentos, presenças, faltas, remarcações, lembretes, tentativas de contato, canal, resultado e observação. O aplicativo não copia o conteúdo das conversas do WhatsApp.</td></tr>
         <tr><td>Configurações profissionais</td><td>Nome da unidade e da equipe, nome e função do profissional, dias e capacidades de atendimento, modelos de mensagem e assinatura.</td></tr>
-        <tr><td>Conta Google (opcional)</td><td>Endereço de e-mail da conta conectada e token de acesso, usados apenas para o backup no Google Drive. O token é guardado no Windows com DPAPI.</td></tr>
+        <tr><td>Conta Google (opcional)</td><td>Endereço de e-mail da conta conectada e token de acesso, usados apenas para o backup no Google Drive. O token é guardado com DPAPI no Windows e no Android Keystore no Android.</td></tr>
       </tbody>
     </table>
     <p>
       Não solicitamos CPF, cartão SUS, endereço, dados bancários, dados de pagamento ou localização.
-      O aplicativo não acessa câmera, microfone, contatos do telefone ou arquivos do computador sem
-      uma ação explícita de importação/exportação.
+      O aplicativo não acessa câmera, microfone, contatos ou arquivos do dispositivo sem uma ação
+      explícita de importação/exportação.
+    </p>
+    <p>
+      Permissões no Android: internet, usada para o Google Drive; e, somente no Android 7–9,
+      armazenamento, usado exclusivamente para salvar exportações na pasta Downloads. Do Android 10
+      em diante, a exportação usa o MediaStore sem permissão de armazenamento. A importação usa o
+      seletor de arquivos do sistema (SAF). O aplicativo não pede localização, câmera, microfone,
+      contatos ou SMS.
     </p>
 
     <h2>3. Para que os dados são usados</h2>
@@ -108,11 +115,11 @@
     <h3>5.1. No dispositivo</h3>
     <p>
       O caderno é salvo no armazenamento local do aplicativo (no Windows/MSIX, na área de dados do
-      pacote; na versão web, no <code>localStorage</code> do navegador). O conteúdo é cifrado com
-      AES-GCM de 256 bits antes de ser gravado. A chave de cifragem fica no mesmo dispositivo.
-      Isso protege contra leitura casual do arquivo, mas <strong>não é uma garantia contra alguém com
-      acesso desbloqueado ao aparelho ou ao perfil do usuário</strong>. Use senha, bloqueio de tela e
-      conta Windows protegida.
+      pacote; no Android, na área privada do aplicativo; na versão web, no <code>localStorage</code>
+      do navegador). O conteúdo é cifrado com AES-GCM de 256 bits antes de ser gravado. A chave de
+      cifragem fica no mesmo dispositivo. Isso protege contra leitura casual do arquivo, mas
+      <strong>não é uma garantia contra alguém com acesso desbloqueado ao aparelho ou ao perfil do
+      usuário</strong>. Use senha, bloqueio de tela, conta Windows protegida e bloqueio do Android.
     </p>
     <h3>5.2. Backup opcional no Google Drive</h3>
     <p>
@@ -122,13 +129,16 @@
       os demais arquivos do Drive, não compartilha arquivos e não usa o Drive para publicidade.
     </p>
     <p>
-      O cliente OAuth Desktop do projeto é distribuído dentro do pacote do aplicativo. Em aplicativos
-      instalados, o segredo do cliente não é tratado como confidencial; a proteção do login vem do
-      PKCE, do consentimento explícito do usuário e do escopo mínimo solicitado.
+      No Windows, o cliente OAuth Desktop do projeto é distribuído dentro do pacote do aplicativo.
+      Em aplicativos instalados, o segredo do cliente não é tratado como confidencial; a proteção do
+      login vem do PKCE, do consentimento explícito do usuário e do escopo mínimo solicitado. No
+      Android, o login usa o Google Sign-In nativo e o aplicativo é identificado pelo pacote e pela
+      assinatura digital; nenhum segredo de cliente é incluído no APK/AAB.
     </p>
     <p>
       Os backups são arquivos de operações por dispositivo, usados para reconciliar alterações entre
-      computadores. Eles são enviados por HTTPS e ficam na conta Google do próprio usuário. Nesta
+      computadores e aparelhos Android. Eles são enviados por HTTPS e ficam na conta Google do próprio
+      usuário. Nesta
       versão, o aplicativo <strong>não aplica criptografia adicional ao payload do backup</strong>;
       a proteção é a segurança da conta Google, do TLS e das permissões do Drive. Recomendamos conta
       institucional, verificação em duas etapas e acesso restrito.
@@ -176,7 +186,7 @@
       Os dados ficam no dispositivo até serem apagados pelo usuário, até a desinstalação do aplicativo
       ou até a limpeza dos dados do navegador/perfil. O backup no Drive fica na conta Google até ser
       removido pelo usuário ou pela política da conta. Recomendamos exportar uma cópia antes de
-      desinstalar, trocar de computador ou limpar o navegador.
+      desinstalar, trocar de dispositivo ou limpar o navegador.
     </p>
     <p>
       A ação <em>“Iniciar novo caderno”</em> cria uma nova geração e substitui o conteúdo da nuvem,
@@ -208,13 +218,14 @@
 
     <h2>11. Segurança</h2>
     <p>
-      Medidas adotadas: cifragem local AES-GCM, token Google no Windows protegido por DPAPI, escopo
-      mínimo <code>drive.appdata</code>, PKCE no login OAuth, nenhuma senha do Google armazenada pelo
-      aplicativo e ausência de servidor próprio. Nenhum sistema é 100% imune. Recomendamos:
+      Medidas adotadas: cifragem local AES-GCM, token Google no Windows protegido por DPAPI e no
+      Android Keystore, escopo mínimo <code>drive.appdata</code>, PKCE no login OAuth do Windows,
+      Google Sign-In nativo no Android, nenhuma senha do Google armazenada pelo aplicativo e ausência
+      de servidor próprio. Nenhum sistema é 100% imune. Recomendamos:
     </p>
     <ul>
-      <li>usar conta Windows individual, com senha e bloqueio automático;</li>
-      <li>não compartilhar o computador com pessoas sem necessidade de acesso;</li>
+      <li>usar conta Windows individual e bloqueio de tela no Android;</li>
+      <li>não compartilhar o computador ou o aparelho com pessoas sem necessidade de acesso;</li>
       <li>ativar verificação em duas etapas na conta Google;</li>
       <li>exportar backups periódicos e guardá-los em local autorizado pela instituição;</li>
       <li>revisar acessos e remover dados de demonstração antes de usar dados reais.</li>

@@ -7,7 +7,7 @@ Arquivos nesta pasta:
 - HorizonteDeCuidado-dev.cer
 
 SHA-256 do MSIX:
-6B23A0196FDC1CB50CC4453C7DDFB483AD914663F3C9BFB21BB5B16326173BFA
+DE45BB04A5F05D29C89075D39C75A2E5845EA5995798A1686ED54DED831FBBD8
 
 O .msix é assinado com certificado de teste. O .cer é o certificado público
 correspondente. A Microsoft Store reassina o pacote em produção.
@@ -25,5 +25,9 @@ locais continuam disponíveis sem login.
 
 A demonstração web fica em ../app/ e usa apenas dados fictícios. Ela não
 acessa o Google Drive.
+
+A versão Android está em preparação para o Google Play, com o pacote
+horizonte.de.cuidado. O login usa o Google Sign-In nativo; nenhum segredo de
+cliente vai no APK/AAB.
 
 Nunca publique dados reais de pacientes neste repositório.

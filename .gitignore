@@ -33,6 +33,19 @@ log.txt
 Thumbs.db
 .DS_Store
 
+# Android: build local, SDK e chave de upload (nunca versionar)
+android/.gradle/
+android/local.properties
+android/build/
+android/app/build/
+android/.cxx/
+android/keystore.properties
+android/keystore/
+android/app/src/main/assets/app/
+android/app/src/main/assets/google-client.json
+*.jks
+*.keystore
+
 # Ferramentas locais
 .vscode/
 .idea/

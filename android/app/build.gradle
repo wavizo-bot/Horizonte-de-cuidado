@@ -1,0 +1,121 @@
+plugins {
+    id "com.android.application"
+}
+
+/* Versão e código vêm do repositório, não de valores digitados à mão:
+   - package.json (version) -> versionName
+   - android/version-code.txt -> versionCode (SEMPRE maior no próximo envio) */
+def projectRoot = rootProject.projectDir.parentFile
+def pkg = new groovy.json.JsonSlurper().parseText(new File(projectRoot, "package.json").text)
+def versionCodeFile = new File(rootProject.projectDir, "version-code.txt")
+if (!versionCodeFile.exists()) throw new GradleException("android/version-code.txt ausente")
+def appVersionCode = versionCodeFile.text.trim().toInteger()
+def appVersionName = pkg.version.toString()
+
+/* A chave de upload fica fora do git (regra 3.1). O arquivo local
+   android/keystore.properties aponta para keystore/horizonte-upload.keystore. */
+def keystorePropsFile = rootProject.file("keystore.properties")
+def keystoreProps = new Properties()
+def hasKeystore = keystorePropsFile.exists()
+if (hasKeystore) keystoreProps.load(new FileInputStream(keystorePropsFile))
+
+android {
+    namespace "horizonte.de.cuidado"
+    compileSdk 36
+
+    compileOptions {
+        // Mensagens em português nos plugins; sem isso o javac usa cp1252 no
+        // Windows e os acentos viram mojibake dentro do APK.
+        encoding "UTF-8"
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    defaultConfig {
+        applicationId "horizonte.de.cuidado"
+        minSdk 24
+        targetSdk 36
+        versionCode appVersionCode
+        versionName appVersionName
+    }
+
+    signingConfigs {
+        release {
+            if (hasKeystore) {
+                storeFile rootProject.file(keystoreProps.getProperty("storeFile"))
+                storePassword keystoreProps.getProperty("storePassword")
+                keyAlias keystoreProps.getProperty("keyAlias")
+                keyPassword keystoreProps.getProperty("keyPassword")
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            // Regra A1: R8 e redução de recursos SEMPRE no release.
+            minifyEnabled true
+            shrinkResources true
+            if (hasKeystore) signingConfig signingConfigs.release
+            proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
+        }
+        debug {
+            // Mesma assinatura do release: instala por cima sem desinstalar e
+            // mantém o mesmo applicationId usado pela credencial OAuth.
+            if (hasKeystore) signingConfig signingConfigs.release
+        }
+    }
+
+    packaging {
+        resources {
+            excludes += [
+                    "META-INF/AL2.0",
+                    "META-INF/LGPL2.1",
+                    "META-INF/*.kotlin_module"
+            ]
+        }
+    }
+}
+
+/* O build web de docs/app é a fonte única do app (regra A5/A6). O Sync
+   abaixo copia o resultado para assets/app antes de cada build, sem fork. */
+def webAppDir = new File(projectRoot, "docs/app")
+def androidAssetsApp = layout.projectDirectory.dir("src/main/assets/app").asFile
+
+tasks.register("syncWebAssets", Sync) {
+    from webAppDir
+    into androidAssetsApp
+    doFirst {
+        if (!webAppDir.isDirectory()) {
+            throw new GradleException("docs/app ausente. Rode 'pnpm build' antes do build Android.")
+        }
+    }
+}
+
+tasks.named("preBuild").configure {
+    dependsOn("syncWebAssets")
+    doFirst {
+        if (!hasKeystore) {
+            throw new GradleException("android/keystore.properties ausente: não é possível assinar o app.")
+        }
+    }
+}
+
+/* As bibliotecas AndroidX trazem kotlin-stdlib em versões diferentes. A partir
+   do Kotlin 1.8, jdk7/jdk8 são artefatos vazios que delegam ao stdlib; manter
+   o 1.6.21 antigo duplicava classes no dex. Alinhamos todos no 1.8.22. */
+configurations.configureEach {
+    resolutionStrategy.eachDependency { details ->
+        if (details.requested.group == "org.jetbrains.kotlin"
+                && details.requested.name.startsWith("kotlin-stdlib")) {
+            details.useVersion "1.8.22"
+        }
+    }
+}
+
+dependencies {
+    implementation "androidx.core:core:1.15.0"
+    implementation "androidx.webkit:webkit:1.14.0"
+    // Login Google nativo (Google Identity). O app é identificado pelo
+    // package + SHA-1; nenhum client secret vai para o APK/AAB.
+    implementation "com.google.android.gms:play-services-auth:21.6.0"
+}

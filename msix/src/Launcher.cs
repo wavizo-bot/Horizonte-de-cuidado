@@ -522,7 +522,8 @@ namespace HorizonteDeCuidado
                 // Sem _popup (modo web), nao ha como logar: instrui o usuario.
                 if (_popup == null)
                     return Json.Serialize(new Dictionary<string, object>()
-                        { { "ok", false }, { "error", "Login Google disponivel somente no app instalado." } });
+                        { { "ok", false }, { "configured", true }, { "signedIn", false },
+                          { "error", "Login Google disponivel somente no app instalado." } });
 
                 string redirectUrl = await _popup(authUrl);
                 string code = null, authErr = null;
@@ -531,11 +532,13 @@ namespace HorizonteDeCuidado
 
                 if (!string.IsNullOrEmpty(authErr))
                     return Json.Serialize(new Dictionary<string, object>()
-                        { { "ok", false }, { "error", "Login recusado: " + authErr } });
+                        { { "ok", false }, { "configured", true }, { "signedIn", false },
+                          { "error", "Login recusado: " + authErr } });
 
                 if (string.IsNullOrEmpty(code))
                     return Json.Serialize(new Dictionary<string, object>()
-                        { { "ok", false }, { "error", "Login cancelado ou tempo esgotado." } });
+                        { { "ok", false }, { "configured", true }, { "signedIn", false },
+                          { "error", "Login cancelado ou tempo esgotado." } });
 
                 FormUrlEncodedContent body = new FormUrlEncodedContent(new Dictionary<string, string>()
                 {
@@ -550,7 +553,8 @@ namespace HorizonteDeCuidado
                 string ts = await tr.Content.ReadAsStringAsync();
                 if (!tr.IsSuccessStatusCode)
                     return Json.Serialize(new Dictionary<string, object>()
-                        { { "ok", false }, { "error", "Token: " + Snip(ts) } });
+                        { { "ok", false }, { "configured", true }, { "signedIn", false },
+                          { "error", "Token: " + Snip(ts) } });
                 Dictionary<string, object> tok = Json.Deserialize<Dictionary<string, object>>(ts);
                 string access = Str(tok, "access_token");
                 string refresh = Str(tok, "refresh_token");
@@ -559,7 +563,8 @@ namespace HorizonteDeCuidado
                         StringComparison.Ordinal) < 0)
                 {
                     return Json.Serialize(new Dictionary<string, object>()
-                        { { "ok", false }, { "error", "A permissao do Google Drive nao foi concedida. "
+                        { { "ok", false }, { "configured", true }, { "signedIn", false },
+                          { "error", "A permissao do Google Drive nao foi concedida. "
                             + "Entre novamente e marque a caixa de acesso ao Google Drive." } });
                 }
                 if (string.IsNullOrEmpty(refresh))
@@ -569,7 +574,8 @@ namespace HorizonteDeCuidado
                 }
                 if (string.IsNullOrEmpty(access) || string.IsNullOrEmpty(refresh))
                     return Json.Serialize(new Dictionary<string, object>()
-                        { { "ok", false }, { "error", "Google nao devolveu refresh_token." } });
+                        { { "ok", false }, { "configured", true }, { "signedIn", false },
+                          { "error", "Google nao devolveu refresh_token." } });
 
                 string email = await FetchEmail(access);
                 Dictionary<string, object> save = new Dictionary<string, object>();

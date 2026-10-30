@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Suporte — Horizonte de Cuidado</title>
-  <meta name="description" content="Suporte do Horizonte de Cuidado: instalação do MSIX, backup no Google Drive, importação de planilha, exportação, privacidade e contato.">
+  <meta name="description" content="Suporte do Horizonte de Cuidado: instalação no Windows e Android, backup no Google Drive, importação de planilha, exportação, privacidade e contato.">
   <meta name="theme-color" content="#174A3A">
   <link rel="stylesheet" href="legal.css">
 </head>
@@ -40,7 +40,8 @@
     <div class="legal-card legal-card--green">
       <p><strong>Contato:</strong> <a href="mailto:mmr05@hotmail.com">mmr05@hotmail.com</a> ·
       <a href="tel:+5511978831938">(11) 97883-1938</a> · atendimento em horário comercial.
-      Para problemas de instalação, informe a versão do Windows e a mensagem de erro, sem anexar dados de pacientes.</p>
+      Para problemas de instalação, informe a versão do Windows ou do Android e a mensagem de erro,
+      sem anexar dados de pacientes.</p>
     </div>
 
     <h2>Instalação no Windows</h2>
@@ -65,12 +66,26 @@
       <li>Se a política da instituição bloquear sideload, solicite liberação à TI ou use o Store.</li>
     </ul>
 
+    <h2>Instalação no Android</h2>
+    <h3>Como instalo no celular ou tablet?</h3>
+    <p>
+      A versão Android está em preparação para o Google Play, com o pacote
+      <code>horizonte.de.cuidado</code>. Quando publicada, instale pela ficha do aplicativo na loja.
+      O app funciona em Android 7.0 (API 24) ou superior, em telefone ou tablet, retrato ou paisagem.
+      Não é necessário instalar certificado ou ativar fontes desconhecidas.
+    </p>
+    <p>
+      O login no Google Drive usa o seletor nativo de contas do Android. O aplicativo não abre uma
+      WebView de login nem um navegador externo para autenticar.
+    </p>
+
     <h2>Dados, backup e restauração</h2>
     <h3>Onde ficam os dados?</h3>
     <p>
-      No armazenamento local do pacote Windows, cifrados com AES-GCM. Se você conectar uma conta
-      Google em <em>Ajustes → Nuvem</em>, o aplicativo também envia backups para a pasta privada
-      <code>appDataFolder</code> do seu Drive. Não há servidor próprio do projeto.
+      No armazenamento local do aplicativo — na área privada do pacote Windows ou do app Android —
+      cifrados com AES-GCM. Se você conectar uma conta Google em <em>Ajustes → Nuvem</em>, o
+      aplicativo também envia backups para a pasta privada <code>appDataFolder</code> do seu Drive.
+      Não há servidor próprio do projeto.
     </p>
 
     <h3>Como faço backup manual?</h3>
@@ -80,7 +95,7 @@
       não envie por e-mail, não publique e não deixe em pasta compartilhada sem controle.
     </p>
 
-    <h3>Como restauro em outro computador?</h3>
+    <h3>Como restauro em outro computador ou aparelho?</h3>
     <ol>
       <li>Instale o aplicativo e conclua o onboarding.</li>
       <li>Se for usar a nuvem, conecte a mesma conta Google e aguarde a sincronização.</li>
@@ -90,15 +105,18 @@
 
     <h3>A nuvem mostra “não configurada”</h3>
     <p>
-      O cliente OAuth do Google é incluído no pacote no momento da build. Se ele não estiver presente,
-      o aplicativo abre normalmente, mas sem nuvem. A versão web também não acessa o Drive. Isso é uma
-      limitação intencional desta versão de demonstração; fale com o suporte para a build institucional.
+      No Windows, o cliente OAuth do Google é incluído no pacote no momento da build; no Android, o
+      login usa o Google Sign-In nativo. Se a nuvem não estiver disponível, o aplicativo abre
+      normalmente e as funções locais continuam funcionando. A versão web também não acessa o Drive.
+      Se o erro persistir no aplicativo instalado, fale com o suporte e informe a plataforma e a
+      mensagem exibida, sem enviar dados de pacientes.
     </p>
 
     <h3>Apaguei os dados do navegador e perdi o caderno</h3>
     <p>
       A versão web guarda os dados no <code>localStorage</code> do navegador. Limpar dados do site,
-      usar navegação privada ou trocar de perfil pode apagar o caderno. Se houver backup no Drive ou
+      usar navegação privada ou trocar de perfil pode apagar o caderno. No Android, limpar os dados
+      do aplicativo ou desinstalá-lo também apaga o caderno local. Se houver backup no Drive ou
       exportação JSON, restaure por eles. Sem backup, não é possível recuperar o conteúdo local.
     </p>
 

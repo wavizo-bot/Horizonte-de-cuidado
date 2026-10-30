@@ -20,7 +20,7 @@ import {
 } from "../components/ui";
 import { addDays, formatShortYear, todayISO, weekdayName } from "../lib/date";
 import { SLOT_LABELS, WEEKDAY_ORDER, defaultWeeklyCapacity } from "../lib/defaults";
-import { getAppVersion, openTextFile, saveTextFile } from "../lib/host";
+import { getAppVersion, hostPlatform, openTextFile, saveTextFile } from "../lib/host";
 import { recurrenceLabel } from "../lib/date";
 import { messageCategoryLabel } from "../lib/whatsapp";
 import type {
@@ -970,7 +970,7 @@ function DataTab({
         <p className="eyebrow">Privacidade</p>
         <h3>Dados reais não vão para o repositório</h3>
         <p className="muted">
-          Este aplicativo é distribuído com dados fictícios. A planilha real deve ser importada apenas no seu computador e o arquivo
+          Este aplicativo é distribuído com dados fictícios. A planilha real deve ser importada apenas no seu dispositivo e o arquivo
           gerado fica fora do código público.
         </p>
         <div className="data-counts">
@@ -1039,10 +1039,10 @@ function CloudTab() {
           <div className="cloud-status">
             <span className={`cloud-status__icon${status.signedIn ? " is-on" : ""}`}><Icon name={status.signedIn ? "cloud" : "cloudOff"} size={28} /></span>
             <div>
-              <strong>{status.signedIn ? status.email || "Conta Google conectada" : status.hostAvailable ? "Nuvem desconectada" : "Disponível no aplicativo Windows"}</strong>
+              <strong>{status.signedIn ? status.email || "Conta Google conectada" : status.hostAvailable ? "Nuvem desconectada" : "Disponível no aplicativo instalado"}</strong>
               <p>
                 {!status.hostAvailable
-                  ? "No navegador, os dados ficam apenas neste dispositivo. Instale o pacote Windows para ativar o backup no Google Drive."
+                  ? "No navegador, os dados ficam apenas neste dispositivo. Instale o aplicativo para Windows ou Android para ativar o backup no Google Drive."
                   : status.signedIn
                     ? status.lastSyncAt ? `Última sincronização em ${new Date(status.lastSyncAt).toLocaleString("pt-BR")}.` : "Conectado. Aguardando a primeira sincronização."
                     : status.configured ? "Entre com sua conta para ativar o backup automático a cada 15 segundos." : "O cliente OAuth ainda não foi configurado neste pacote. Consulte o README do projeto."}
@@ -1141,6 +1141,15 @@ function CloudTab() {
 
 function AboutTab() {
   const [version, setVersion] = useState("1.0.0");
+  const platform = hostPlatform();
+  const platformName =
+    platform === "android" ? "Android" : platform === "windows" ? "Windows" : "Web";
+  const platformDetail =
+    platform === "android"
+      ? "Android 7.0 ou superior"
+      : platform === "windows"
+        ? "Windows 10/11 · MSIX"
+        : "Navegador (PWA)";
   useEffect(() => {
     void getAppVersion().then((value) => value && setVersion(value.replace(/^v/i, "")));
   }, []);
@@ -1153,7 +1162,7 @@ function AboutTab() {
             <Icon name="sun" size={28} />
           </span>
           <div>
-            <p className="eyebrow">Aplicativo Windows</p>
+            <p className="eyebrow">Aplicativo {platformName}</p>
             <h2>Horizonte de Cuidado</h2>
             <p className="muted">Agenda, filas e comunicação para o cuidado em saúde mental.</p>
           </div>
@@ -1178,15 +1187,15 @@ function AboutTab() {
       <Card className="soft-card settings-aside">
         <p className="eyebrow">Transparência</p>
         <h3>O que fica onde</h3>
-        <p className="muted">Pacientes, agenda e anotações ficam neste computador. A nuvem é opcional e usa a sua conta Google.</p>
+        <p className="muted">Pacientes, agenda e anotações ficam neste dispositivo. A nuvem é opcional e usa a sua conta Google.</p>
         <p className="muted">Não há anúncios, rastreamento de terceiros ou envio automático de mensagens.</p>
         <div className="about-meta">
           <div><span>Aplicativo</span><strong>Horizonte de Cuidado</strong></div>
-          <div><span>Plataforma</span><strong>Windows 10/11 · MSIX</strong></div>
+          <div><span>Plataforma</span><strong>{platformDetail}</strong></div>
           <div><span>Versão</span><strong>{version}</strong></div>
           <div><span>Última atualização</span><strong>2026</strong></div>
         </div>
-        <p className="muted small">O nome e o identificador do pacote serão confirmados antes da publicação na Microsoft Store.</p>
+        <p className="muted small">Canais de distribuição: Microsoft Store (Windows/MSIX) e Google Play (Android).</p>
       </Card>
     </div>
   );

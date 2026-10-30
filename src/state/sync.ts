@@ -101,7 +101,7 @@ export function useDriveSync({ state, stateRef, applyExternalState, loaded }: Op
         ok: false,
         configured: false,
         signedIn: false,
-        error: "A nuvem Google Drive está disponível no aplicativo Windows instalado.",
+        error: "A nuvem Google Drive está disponível no aplicativo instalado para Windows ou Android.",
       });
       return;
     }
@@ -114,7 +114,7 @@ export function useDriveSync({ state, stateRef, applyExternalState, loaded }: Op
     async (silent = false) => {
       if (busyRef.current) return;
       if (!isHostAvailable()) {
-        if (!silent) setError("A nuvem Google Drive está disponível no aplicativo Windows instalado.");
+        if (!silent) setError("A nuvem Google Drive está disponível no aplicativo instalado para Windows ou Android.");
         return;
       }
       busyRef.current = true;

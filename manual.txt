@@ -1,12 +1,14 @@
 HORIZONTE DE CUIDADO — MANUAL DE RETOMADA
 =========================================
 Atualizado em: 29/10/2026
-Versão do aplicativo: 1.0.0.0
-Status: demonstração local pronta; identidade de loja e OAuth pendentes.
+Versão do aplicativo: 1.0.0 (Android versionCode 1) / 1.0.0.0 (MSIX)
+Status: Windows/MSIX e Android construídos e testados localmente; publicação
+nas lojas, revisão legal e login Android de ponta a ponta ainda pendentes.
 
 1. O QUE É
 ----------
-Aplicativo Windows/MSIX para equipes de saúde mental organizarem:
+Aplicativo para Windows/MSIX e Android criado para equipes de saúde mental
+organizarem:
 - encaminhamentos e fila de matriciamento/triagem;
 - atendimentos individuais recorrentes ou pontuais;
 - grupos e atividades coletivas com recorrência;
@@ -22,11 +24,11 @@ sempre da equipe profissional.
 
 2. NOME E IDENTIDADE
 --------------------
-Nome final escolhido pelo usuário: Horizonte de Cuidado.
+Nome final: Horizonte de Cuidado.
 Sugestões apresentadas: Horizonte de Cuidado, Fila Viva, Cuidado em Rede,
 Agenda Acolhe e Ponte do Cuidado.
 
-Identidade reservada no Microsoft Partner Center:
+Windows/MSIX (identidade reservada no Microsoft Partner Center):
 - Nome do pacote: wavizo.Horizontedecuidado
 - Publisher: CN=57BB464E-553F-45B6-A4ED-B253157408EB
 - Publisher display name: wavizo
@@ -37,22 +39,41 @@ Identidade reservada no Microsoft Partner Center:
 - Aplicativo: HorizonteDeCuidado
 - Executável: HorizonteDeCuidado.exe
 
+Android (em preparação para o Google Play):
+- Pacote: horizonte.de.cuidado
+- versionName: 1.0.0; versionCode: 1 (android/version-code.txt)
+- minSdk 24 (Android 7.0); compileSdk/targetSdk 36
+- Assinatura local: upload key em android/keystore/horizonte-upload.keystore
+- SHA-1 da upload key: 35:14:75:E6:C6:E1:EE:F8:DF:3F:5D:03:70:C5:DC:5C:A1:B8:74:F6
+- SHA-1 do certificado público do Play App Signing:
+  12:5B:4F:5D:22:58:61:40:7C:59:12:FD:B4:52:29:E5:37:F7:72:D8
+- Cliente OAuth Android do projeto "horizonte-de-cuidado":
+  78293254115-1udh0d71f17747uhifilv51nbpkad95r (sem segredo no APK/AAB).
+
 O nome do pacote no AppxManifest.xml usa a grafia exata fornecida pelo Partner
-Center. A pasta de trabalho ainda pode ser renomeada de "teste" para
-"horizonte-de-cuidado" sem alterar os scripts, que usam o diretório atual.
+Center. A pasta de trabalho atual é "Horizonte de Cuidado".
 
 3. STACK E ARQUITETURA
 ----------------------
-- Interface: React 19 + TypeScript + Vite 7, CSS próprio.
-- Host Windows: C# WinForms + WebView2, compilado com .NET Framework 4.8 csc.
-- Empacotamento: MSIX x64 com makeappx/signtool do Windows SDK.
-- Dados locais: localStorage cifrado com AES-GCM 256; chave no mesmo
-  localStorage (limitação documentada).
-- Nuvem: Google Drive appDataFolder, OAuth Desktop com PKCE e loopback,
-  token protegido por DPAPI no host Windows.
+- Interface compartilhada: React 19 + TypeScript + Vite 7, CSS próprio.
+- Windows: host C# WinForms + WebView2, compilado com .NET Framework 4.8 csc;
+  empacotamento MSIX x64 com makeappx/signtool do Windows SDK.
+- Android: Activity Java + WebView nativo com WebViewAssetLoader servindo
+  docs/app/ em https://appassets.androidplatform.net/app/. Ponte JS/nativa
+  window.HorizonteAndroid + window.__horizonteResolve; sem fork da lógica React.
+- Dados locais: localStorage cifrado com AES-GCM 256; a chave fica no mesmo
+  dispositivo (limitação documentada).
+- Nuvem: Google Drive appDataFolder, escopo drive.appdata.
+  - Windows: OAuth Desktop com PKCE e loopback http://localhost, token em DPAPI.
+  - Android: Google Sign-In nativo (GoogleSignIn + GoogleAuthUtil), token de
+    acesso cifrado no Android Keystore. Sem WebView de login e sem navegador.
 - Sincronização: op-log por dispositivo, lamport, baseVersion, geração de
   reinício, conflitos preservados para decisão do usuário, polling de 15 s.
 - Sem servidor próprio, sem analytics, sem anúncios.
+- Rust: o núcleo Rust exigido pela diretriz geral não foi implementado nesta
+  máquina porque o toolchain Rust não está instalado. A lógica de negócio
+  permanece em TypeScript compartilhado e os hosts são C#/Java. Esta é uma
+  exceção registrada; ver seção 18.
 
 4. ESTRUTURA DE PASTAS
 ----------------------
@@ -68,10 +89,14 @@ Raiz:
 - public/legal/        fonte dos documentos legais
 - docs/                landing pública, documentos legais, assets e downloads
   - assets/screens/    capturas WebP da landing
-  - downloads/         MSIX e certificado público da demonstração
+  - downloads/         MSIX, certificado público e README de downloads
   - app/               build web gerado por pnpm build (versionado para o Pages)
 - msix/                manifesto, host C#, WebView2 fixo e Build-MSIX.ps1
-- tools/               scripts de build, assets, capturas, importação e QA
+- android/             projeto Gradle, Java, recursos, versão e chave local
+  - app/src/main/assets/app/  cópia de docs/app/ feita pelo Gradle
+  - keystore/          upload key (fora do git)
+  - certificados-play/ certificado público do Play App Signing
+- tools/               build, assets, capturas, importação, QA e Play
 - tests/               testes Vitest de agenda, importação e sync
 - entregas/            artefatos locais gerados (ignorado pelo git)
 - dados/               importação real da planilha (ignorado pelo git)
@@ -115,13 +140,19 @@ pessoais e está no .gitignore. NUNCA publicar, anexar ou enviar por e-mail.
 A planilha de exemplo tem cerca de 209 linhas; a importação consolidou
 cadastros repetidos e reconheceu 208 pacientes únicos na última execução.
 
+No Android, a importação usa o seletor de arquivos do sistema (SAF), sem acesso
+amplo ao armazenamento. A exportação CSV/JSON usa MediaStore em Downloads; no
+Android 7–9 o app pede WRITE_EXTERNAL_STORAGE apenas para essa gravação.
+
 7. COMO DESENVOLVER
 -------------------
-Requisitos: Node 24+, pnpm 12+, Windows 10/11, Edge WebView2 Runtime.
+Requisitos: Node 24+, pnpm 12+, Windows 10/11, Edge WebView2 Runtime; para
+Android: JDK 17+, Android SDK 36 e a upload key local.
   pnpm install
   pnpm dev          # http://127.0.0.1:4180/
   pnpm check        # TypeScript
-  pnpm test         # Vitest
+  pnpm test         # Vitest (33 testes)
+  pnpm check:privacy
   pnpm build        # legal + build Vite + cópia para docs/app/
   pnpm docs         # servidor local da landing em http://127.0.0.1:4190/
 
@@ -146,25 +177,83 @@ Para a landing/Pages, copiar os dois arquivos para docs/downloads/.
 O .cer é público; o .pfx e a senha do certificado ficam em msix/ e são
 ignorados pelo git. A Microsoft Store reassina o pacote em produção.
 
-9. NUVEM GOOGLE DRIVE
----------------------
-- Client OAuth: criado no projeto Google "horizonte-de-cuidado". O JSON do
-  client "Desktop app" fica em msix/google-client.json (ignorado pelo git;
-  nunca versionar). Há um client Desktop alternativo na pasta local de
-  credenciais; usar apenas um por build.
+9. COMO GERAR O ANDROID
+-----------------------
+Pré-requisitos: JDK 17+, Android SDK 36, android/keystore.properties e a
+upload key em android/keystore/horizonte-upload.keystore (fora do git).
+
+  cd android
+  .\gradlew.bat assembleDebug
+  .\gradlew.bat assembleRelease bundleRelease
+
+Saídas:
+- android/app/build/outputs/apk/debug/app-debug.apk
+- android/app/build/outputs/apk/release/app-release.apk
+- android/app/build/outputs/bundle/release/app-release.aab (Google Play)
+- android/app/build/outputs/mapping/release/mapping.txt (guardar com o AAB)
+- android/app/build/outputs/mapping/release/configuration.txt, seeds.txt,
+  usage.txt
+
+O release usa R8 full mode, proguard-android-optimize.txt, shrinkResources,
+-keepattributes SourceFile,LineNumberTable e assinatura com a upload key.
+O AAB desta build tem isOptimizationsEnabled=true no
+BUNDLE-METADATA/com.android.tools/r8.json. O mapping.txt local é idêntico ao
+proguard.map embutido no AAB (SHA-256
+254128C01FA70A21C54F9DC5E0E8C1087F245C2BE57604F6D866EDB69356990D).
+
+O Gradle copia docs/app/ para android/app/src/main/assets/app/ antes de cada
+build. O pacote deve ficar idêntico ao fonte (regra A5); a última verificação
+encontrou 28 arquivos iguais, incluindo BUILD.txt.
+
+Teste do artefato final:
+  adb install -r android\app\build\outputs\apk\release\app-release.apk
+
+Para gerar o APK universal a partir do AAB (bundletool 1.18.3):
+  java -jar bundletool-all-1.18.3.jar build-apks \
+    --bundle=android\app\build\outputs\bundle\release\app-release.aab \
+    --output=entregas\android\horizonte-universal.apks --mode=universal \
+    --ks=android\keystore\horizonte-upload.keystore \
+    --ks-key-alias=horizonte-upload --ks-pass=pass:... --key-pass=pass:...
+Depois, extrair universal.apk do .apks e instalar. O APK universal é assinado
+com a upload key local; ele não substitui o teste da build assinada pelo Play.
+
+10. NUVEM GOOGLE DRIVE E OAUTH
+------------------------------
 - Escopo mínimo: https://www.googleapis.com/auth/drive.appdata
-- Login por PKCE + loopback local com porta dinâmica (nunca IP literal).
-- Token no Windows via DPAPI.
-- Arquivos de backup por dispositivo na pasta privada appDataFolder.
+- Windows: cliente OAuth Desktop em msix/google-client.json (ignorado pelo git;
+  nunca versionar). Login em janela própria do programa (WebView2 filho,
+  Owner da janela principal), com PKCE e loopback http://localhost. A janela
+  fecha sozinha no redirect e o programa retoma o controle; fechar a janela
+  antes do redirect retorna erro tratado, sem deixar loginBusy preso.
+- Android: Google Sign-In nativo (package + SHA-1). Não usa WebView de login
+  nem navegador externo. O token de acesso é cifrado no Android Keystore e
+  renovado com GoogleAuthUtil; o app só marca login concluído com token
+  utilizável e escopo do Drive.
+- Arquivos de backup por dispositivo na pasta privada appDataFolder, prefixo
+  horizonte- (horizonte-ops-<deviceId>.json; legado horizonte-backup.json).
 - Payload em JSON claro nesta versão; a política de privacidade documenta a
   limitação. Não há criptografia adicional de aplicativo no backup.
 - Sem client configurado, a interface mostra "nuvem não configurada" e as
-  funções locais continuam funcionando. A build atual inclui o client; o
-  login só é concluído com consentimento e token válido.
+  funções locais continuam funcionando.
 - Demo nunca sobe para nuvem vazia; base demo é substituída por dados remotos
   válidos no primeiro login; backups inválidos não sobrescrevem nada.
+- Respostas de erro incluem configured:true e signedIn:false quando o cliente
+  existe mas o login foi cancelado/expirado; a UI não deve mostrar "não
+  configurada" nesse caso.
 
-10. DOCUMENTOS LEGAIS E LANDING
+BLOQUEIO ATUAL DO ANDROID:
+O login nativo abre o seletor de contas, mas retorna ApiException 10
+(DEVELOPER_ERROR). O cliente OAuth Android fornecido não reconhece o pacote
+horizonte.de.cuidado + SHA-1 da upload key. O certificado público do Play
+(certificados-play/deployment_cert.der) tem SHA-1
+12:5B:4F:5D:22:58:61:40:7C:59:12:FD:B4:52:29:E5:37:F7:72:D8, provavelmente o
+hash cadastrado. Para testar o APK local, cadastrar o SHA-1 da upload key
+35:14:75:E6:C6:E1:EE:F8:DF:3F:5D:03:70:C5:DC:5C:A1:B8:74:F6 no mesmo cliente
+Android no Google Cloud Console. Para a build do Play, instalar o AAB pelo
+teste interno e validar com o SHA-1 do Play App Signing. Sem isso, o Drive
+não pode ser concluído no Android; as funções locais seguem funcionando.
+
+11. DOCUMENTOS LEGAIS E LANDING
 -------------------------------
 Fonte: public/legal/
 - politica-de-privacidade.html
@@ -175,6 +264,9 @@ Fonte: public/legal/
 
   pnpm legal   # copia para docs/ com validação de BOM e U+FFFD
 
+Os textos já mencionam Windows, Android, DPAPI, Android Keystore, Google
+Sign-In nativo, permissão de armazenamento Android 7–9 e backup opcional.
+
 Landing: docs/index.html + docs/site.css + docs/assets/.
 Metadados, Open Graph, robots.txt, sitemap.xml e downloads estão preparados.
 A demonstração web fica em docs/app/, é gerada por pnpm build a partir de dist/
@@ -183,59 +275,129 @@ raiz de docs/; o build também leva uma cópia para docs/app/legal/. Não editar
 docs/app/ à mão. A versão web é demonstrativa e não acessa o Google Drive.
 URLs públicas:
 - Landing: https://wavizo-bot.github.io/Horizonte-de-cuidado/
+- App web: https://wavizo-bot.github.io/Horizonte-de-cuidado/app/
 - Repositório: https://github.com/wavizo-bot/Horizonte-de-cuidado
 - Pages: main, pasta /docs.
-- Publicado no commit fa98248, tag v1.0.0.0.
 
-11. ASSETS DE LOJA
+12. ASSETS DE LOJA
 ------------------
-- Capturas de loja: entregas/store/01-hoje.png a 06-relatorios.png
-  (1366x768; exatamente seis).
+Windows/Store:
+- Capturas 1366x768: entregas/store/01-hoje.png a 06-relatorios.png.
 - Arte 9:16: entregas/store/arte-720x1080.png.
 - Arte 1:1: entregas/store/arte-1080x1080.png.
 - Ícones MSIX e PWA: msix/Assets/, public/, docs/assets/.
 - Feature graphic 1024x500, splash 620x300, tile largo 310x150, OG 1200x630.
-Todos usam dados fictícios; nenhuma captura contém dados reais.
 
-12. TESTES E VERIFICAÇÃO
+Google Play (entregas/play/):
+- icone-512.png (512x512).
+- feature-1024x500.png (1024x500).
+- telefone-01-hoje.png a telefone-06-filas.png (1080x1920, viewport 540x960
+  com deviceScaleFactor 2).
+- tablet-01-hoje.png a tablet-06-relatorios.png (1366x768).
+- ficha-play.md e descricao-pt-br.txt.
+Gerar novamente:
+  node tools/serve-docs.mjs   # porta 4190, em outro terminal
+  node tools/make-play-assets.mjs
+Todos usam dados fictícios; nenhuma captura contém dados reais. As capturas de
+telefone usam a visão diária da agenda para não cortar a semana.
+
+13. TESTES E VERIFICAÇÃO
 ------------------------
-  pnpm test              # 33 testes: agenda, importação e sync
-  pnpm check             # TypeScript
-  pnpm check:privacy     # dados reais da base local em arquivos públicos
-  pnpm build             # build de produção
+  pnpm check              # TypeScript: sem erros
+  pnpm test               # 33 testes em 3 arquivos: todos passaram
+  pnpm check:privacy      # 101 arquivos públicos; nenhum dado real
+  pnpm build              # build de produção + docs/app/
   node tools\visual-check.mjs   # QA visual com Playwright/Edge
   node tools\check-site.mjs     # landing: links, imagens, overflow, console
   node tools\make-screenshots.mjs
+  node tools\make-play-assets.mjs
 
 Servidores locais:
 - app: http://127.0.0.1:4180/
 - landing: http://127.0.0.1:4190/
 
-13. CREDENCIAIS — ONDE FICAM (NUNCA O CONTEÚDO)
+Testes Android realizados:
+- APK release instalado e aberto no telefone (Android 16/API 36).
+- Dashboard, menu lateral, Ajustes > Nuvem ("Pronto para conectar"), rotação
+  para paisagem, exportação CSV/JSON, importação via SAF, impressão nativa,
+  WhatsApp e tel: (discador com +55 11 99000-0001) testados.
+- Aba ativa do menu móvel: scrollLeft=199.38, scrollWidth=619,
+  clientWidth=370; aba "Nuvem" visível.
+- Login nativo abre o seletor de contas do Google; a conclusão está bloqueada
+  pelo DEVELOPER_ERROR 10 descrito na seção 10.
+- Teste de cancelamento no APK universal final (SHA-256 99CE19...): Ajustes >
+  Nuvem > Conectar Google Drive > Voltar. O status permaneceu "Pronto para
+  conectar" e o aviso foi "Login cancelado.", sem "Nuvem não configurada" e
+  sem a mensagem antiga de falha ao abrir o seletor.
+- APK universal gerado do AAB, assinado com a upload key e instalado; o app
+  abriu normalmente.
+- WebView debugging desativado no release; testes de UI no release são feitos
+  por ADB/screenshot, não por CDP.
+- Rotação, telefone e tablet: o layout usa WindowInsets/edge-to-edge; o teste
+  em tablet físico ainda não foi feito (emulador sem virtualização no firmware).
+
+Testes Windows/MSIX realizados:
+- Janela própria "Entrar com o Google" abre como filho da janela principal;
+  WM_CLOSE fecha a janela e o app retoma o controle.
+- Resposta de cancelamento via CDP:
+  {"ok":false,"configured":true,"signedIn":false,
+   "error":"Login cancelado ou tempo esgotado."}
+- Executável de msix/staging testado com os documentos legais atualizados
+  (título "Horizonte de Cuidado", URL app.horizonte.local, política servida
+  com "Android Keystore").
+- A instalação local do MSIX ainda falha com 0x800B0109 porque o certificado
+  de teste não está confiável; importar para Cert:\CurrentUser\Root exige
+  UAC/UI. O executável de staging foi testado diretamente.
+
+Build Android verificada:
+- versionCode=1, versionName=1.0.0, minSdk=24, targetSdk=36.
+- R8 full mode: isOptimizationsEnabled=true, isObfuscationEnabled=true,
+  isShrinkingEnabled=true; minApiLevel=24.
+- mapping.txt local idêntico ao proguard.map do AAB.
+- assets/app idêntico a docs/app (28 arquivos).
+- Permissões: INTERNET; WRITE_EXTERNAL_STORAGE com maxSdkVersion=28 (somente
+  exportação em Downloads no Android 7–9); AD_ID removida explicitamente.
+  Sem localização, câmera, microfone, contatos ou SMS.
+
+14. CREDENCIAIS — ONDE FICAM (NUNCA O CONTEÚDO)
 -----------------------------------------------
-- Google OAuth: msix/google-client.json (ignorado; presente na build atual).
-- Certificado de teste: msix/devcert.pfx e msix/.devcert-password
+- Google OAuth Windows: msix/google-client.json (ignorado; presente na build).
+- Certificado de teste MSIX: msix/devcert.pfx e msix/.devcert-password
   (ambos ignorados; não versionar).
+- Android upload key: android/keystore/horizonte-upload.keystore e
+  android/keystore.properties (ambos ignorados; nunca versionar).
+- Certificado público do Play: android/certificados-play/ (público, pode
+  versionar; não assina o AAB).
 - Partner Center: identidade reservada; pacote wavizo.Horizontedecuidado,
   PFN wavizo.Horizontedecuidado_c5p81jb0en0bm, Store ID 9NFVH4GZLNJF.
 - GitHub: conta wavizo-bot, repositório Horizonte-de-cuidado.
 - Contato público: mmr05@hotmail.com / (11) 97883-1938.
 
-14. VERSÕES
------------
-- 1.0.0.0 — demonstração local, MSIX assinado com certificado de teste,
-  landing, documentos legais e demonstração web prontos. Nuvem com client
+15. VERSÕES E HASHES
+--------------------
+- Android 1.0.0 (versionCode 1) — primeira versão Android, telefone/tablet,
+  retrato/paisagem, OAuth nativo, Drive opcional, R8 full mode.
+- Windows/MSIX 1.0.0.0 — demonstração local, MSIX assinado com certificado de
+  teste, landing, documentos legais e demonstração web. Nuvem com cliente
   OAuth Desktop; backup opcional. Não enviada ao Partner Center.
-  SHA256 do último MSIX:
-  6B23A0196FDC1CB50CC4453C7DDFB483AD914663F3C9BFB21BB5B16326173BFA
 
-15. ARMADILHAS CONHECIDAS
+SHA-256 desta build:
+  MSIX .............. DE45BB04A5F05D29C89075D39C75A2E5845EA5995798A1686ED54DED831FBBD8
+  AAB ............... CA7642A93A46E12C05C04F143CF183F44576CF7D789EFBFE9A823224395FD7FB
+  APK release ....... 85CCC0BCBB19C8D9CE1CFD3AA9AB0FAB58A3C29EFFFAAF611FC9A8C11A5B0DA2
+  APK universal ..... 99CE19D123A789C95FF42B9CA2B3E9A1F86C1654FEF42078EE5E3A81C1AB8899
+  mapping.txt ....... 254128C01FA70A21C54F9DC5E0E8C1087F245C2BE57604F6D866EDB69356990D
+
+O MSIX em docs/downloads/ é o mesmo de entregas/ (mesmo SHA-256). O AAB e o
+APK são artefatos locais; o AAB é o arquivo a enviar ao Play.
+
+16. ARMADILHAS CONHECIDAS
 -------------------------
 - Datas civis usam YYYY-MM-DD e funções próprias; nunca toISOString() para
   data civil.
 - A chave AES fica no mesmo localStorage; não protege contra perfil
   desbloqueado.
-- Limpar dados do navegador/perfil apaga o caderno local.
+- Limpar dados do navegador/perfil/app apaga o caderno local.
 - O backup no Drive é JSON claro nesta versão.
 - WebView2 não pode levar cache/cookies no MSIX; o Build-MSIX limpa.
 - Certificado de teste em TrustedPeople pode exigir administrador.
@@ -244,29 +406,56 @@ Servidores locais:
   obrigatória.
 - A primeira coluna da planilha é "F"; o importador a trata como nome quando
   não há coluna de nome.
-- `pnpm build` roda o sync legal antes do Vite e copia o resultado para
+- pnpm build roda o sync legal antes do Vite e copia o resultado para
   docs/app/; manter os documentos em public/legal e não editar docs/ nem
   docs/app/ à mão.
 - Se a identidade do pacote mudar, atualizar também package.json, index.html,
   manifestos, landing, README, legal e pasta do projeto.
-- O repositório público não pode conter dados/, log.txt, .pfx, tokens ou
-  exports reais. Rodar pnpm check:privacy antes de cada commit público; ele
-  compara nomes, matrículas e telefones da base local com os arquivos
-  versionados e com dist/ e msix/staging/www.
+- O repositório público não pode conter dados/, log.txt, .pfx, tokens,
+  keystore ou exports reais. Rodar pnpm check:privacy antes de cada commit.
+- Android: o build release desativa WebView debugging; não procurar CDP no
+  APK release.
+- Android: o Gradle sincroniza docs/app/ para assets/app/; se rodar pnpm build
+  depois do build Android, o BUILD.txt muda e o pacote deixa de ser idêntico.
+  Rebuildar o Android por último ou repetir assembleRelease/bundleRelease.
+- Android: o APK local só autentica no Google se o SHA-1 da upload key estiver
+  no cliente OAuth Android; a build do Play usa o SHA-1 do Play App Signing.
+- Android: o telefone pode cair do ADB sem fio; reconectar com
+  adb pair/adb connect antes dos testes finais.
+- Emulador caderno_phone não inicia com aceleração (virtualização desativada
+  no firmware); o teste de tablet precisa de aparelho físico.
+- O MSIX local pode falhar com 0x800B0109 enquanto o certificado de teste não
+  estiver confiável; testar o staging ou importar o .cer com UAC.
 
-16. PENDÊNCIAS
+17. PENDÊNCIAS
 --------------
-1. Testar login Google/Drive de ponta a ponta com uma conta autorizada; a tela
-   de consentimento do cliente já foi validada.
-2. Revisar textos legais com o responsável.
-3. Enviar o MSIX final ao Partner Center e concluir a listagem da Store.
-4. Manter docs/app/ gerado do mesmo commit da landing e testar /app/ antes de
-   cada publicação; a versão web é demonstrativa e não acessa o Drive.
-5. Rodar pnpm check:privacy antes de cada commit público.
-6. Opcional: renomear a pasta de trabalho de "teste" para
-   "horizonte-de-cuidado"; os scripts usam o diretório atual.
+1. Cadastrar o SHA-1 da upload key no cliente OAuth Android (Google Cloud
+   Console) OU enviar o AAB ao Play/teste interno e instalar a build assinada
+   pelo Play; então concluir login + backup + restauração no Android.
+2. Teste de cancelamento concluído no APK universal final; reinstalar o APK
+   final em outros aparelhos de teste quando necessário.
+3. Testar em tablet físico, retrato e paisagem.
+4. Revisar os textos legais com o responsável e publicar os documentos.
+5. Enviar o MSIX final ao Partner Center e concluir a listagem da Store.
+6. Criar o app no Play Console, preencher ficha, segurança de dados,
+   classificação, público-alvo e URL de privacidade; enviar o AAB.
+7. Manter docs/app/ gerado do mesmo commit da landing e testar /app/ antes de
+   cada publicação.
+8. Rodar pnpm check:privacy antes de cada commit público.
+9. Se o núcleo Rust for exigido, instalar o toolchain e migrar a lógica crítica
+   para uma biblioteca Rust com FFI; hoje isso não foi feito (seção 18).
 
-17. CONTATO
+18. EXCEÇÃO REGISTRADA — RUST
+-----------------------------
+A diretriz geral do projeto pede núcleo Rust para lógica crítica,
+sincronização, persistência e rede. Nesta máquina o Rust não está instalado
+(nem cargo/rustc), e o app já estava estruturado em React/TypeScript + hosts
+C#/Java. A migração não foi feita nesta versão. A decisão está registrada aqui
+e no log.txt; não é uma alegação de conformidade. Se o toolchain for
+instalado, a migração pode ser feita por partes (parser/agenda/sync) com FFI,
+mantendo a interface e os contratos atuais.
+
+19. CONTATO
 -----------
 Maycon M. R. — mmr05@hotmail.com — (11) 97883-1938
 Projeto independente. Não é prontuário, sistema oficial ou dispositivo médico.

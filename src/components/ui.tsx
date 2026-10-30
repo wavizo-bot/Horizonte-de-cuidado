@@ -374,8 +374,20 @@ export function Tabs<T extends string>({
   onChange: (value: T) => void;
   className?: string;
 }) {
+  const listRef = useRef<HTMLDivElement>(null);
+
+  // No telefone a barra rola na horizontal. Ao abrir a tela ou trocar de aba,
+  // traz a aba ativa para a área visível em vez de deixar o usuário no início.
+  useEffect(() => {
+    const list = listRef.current;
+    if (!list) return;
+    const active = list.querySelector<HTMLElement>('[aria-selected="true"]');
+    if (!active) return;
+    active.scrollIntoView({ block: "nearest", inline: "nearest" });
+  }, [value]);
+
   return (
-    <div className={cx("tabs", className)} role="tablist">
+    <div ref={listRef} className={cx("tabs", className)} role="tablist">
       {tabs.map((tab) => (
         <button
           key={tab.value}

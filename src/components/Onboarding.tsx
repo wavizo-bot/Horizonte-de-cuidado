@@ -17,7 +17,7 @@ const STEPS = [
   {
     eyebrow: "Antes de começar",
     title: "Dados sensíveis pedem cuidado.",
-    text: "O caderno fica neste computador, com criptografia local. A nuvem é opcional e usa a sua própria conta Google. Nenhuma mensagem é enviada automaticamente.",
+    text: "O caderno fica neste dispositivo, com criptografia local. A nuvem é opcional e usa a sua própria conta Google. Nenhuma mensagem é enviada automaticamente.",
   },
 ];
 

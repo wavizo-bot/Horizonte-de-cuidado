@@ -2237,7 +2237,7 @@ svg {
   .month-bar { grid-template-columns: 120px minmax(0, 1fr) 48px; }
 }
 
-@media (max-width: 860px) {
+@media (max-width: 640px) {
   .sidebar { display: none; }
   .main { margin-left: 0; }
   .main__inner { padding: 18px 16px 92px; }
@@ -2250,7 +2250,7 @@ svg {
     padding: 10px 14px;
     position: sticky;
     top: 0;
-    z-index: 35;
+    z-index: 70;
     background: rgba(246, 241, 230, 0.94);
     backdrop-filter: blur(10px);
     border-bottom: 1px solid var(--line);
@@ -2270,7 +2270,8 @@ svg {
   .mobile-bar__brand { border: 0; background: none; padding: 0; }
   .mobile-bar .brand__mark { width: 36px; height: 36px; border-radius: 10px; }
   .mobile-bar .brand__text strong { font-size: 1.2rem; }
-  .mobile-bar .brand__text small { font-size: 0.58rem; }
+  /* A barra compacta mostra só "Horizonte"; o nome completo fica no painel. */
+  .mobile-bar .brand__text small { display: none; }
   .drawer-backdrop {
     display: block;
     position: fixed;
@@ -2282,7 +2283,12 @@ svg {
   .drawer {
     display: flex;
     position: absolute;
-    inset: 0 auto 0 0;
+    /* Abre abaixo da barra do emblema: ele continua visível e fecha o painel
+       ao ser tocado de novo (regra A9). */
+    top: 61px;
+    right: auto;
+    bottom: 0;
+    left: 0;
     width: min(320px, 88vw);
     background: var(--green-deep);
     animation: drawer-in 180ms ease;
@@ -2425,7 +2431,16 @@ svg {
   .patient-detail__quick { width: 100%; }
   .patient-detail__quick .select-wrap { flex: 1; min-width: 0; }
   .messages-layout { gap: 12px; }
-  .about-card__brand { flex-wrap: wrap; }
+  /* Cabeçalhos com ação (Abrir arquivo, Exportar etc.) empilham no telefone:
+     o título usa a largura toda e o botão fica logo abaixo. */
+  .section-heading { flex-direction: column; gap: 10px; }
+  .section-heading__actions { justify-content: flex-start; }
+  /* No telefone o selo de versão desce para baixo do texto, em vez de
+     espremer a descrição em uma coluna estreita. */
+  .about-card__brand { flex-wrap: wrap; align-items: flex-start; }
+  .about-card__brand > div { flex: 1 1 200px; min-width: 0; }
+  .about-card__brand h2 { font-size: 1.55rem; }
+  .about-card__brand .badge { order: 3; margin-left: 70px; }
   .onboarding__panel { padding: 16px 14px; }
   .onboarding__content h1 { font-size: 1.9rem; }
   .onboarding__footer .inline-actions .btn { flex: 1; }

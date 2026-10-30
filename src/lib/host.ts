@@ -69,6 +69,16 @@ export function isHostAvailable(): boolean {
   return Boolean(host());
 }
 
+export type HostPlatform = "android" | "windows" | "web";
+
+/** Plataforma do host nativo; "web" quando roda no navegador/PWA. */
+export function hostPlatform(): HostPlatform {
+  if (typeof window === "undefined") return "web";
+  if ((window as Window & { HorizonteAndroid?: unknown }).HorizonteAndroid) return "android";
+  if (window.chrome?.webview?.hostObjects?.horizonteHost) return "windows";
+  return "web";
+}
+
 async function call<T>(method: keyof HostObject, ...args: unknown[]): Promise<T | null> {
   const object = host();
   if (!object) return null;
@@ -138,7 +148,7 @@ export async function driveState(): Promise<DriveState> {
       ok: false,
       configured: false,
       signedIn: false,
-      error: "A nuvem Google Drive está disponível no aplicativo Windows instalado.",
+      error: "A nuvem Google Drive está disponível no aplicativo instalado para Windows ou Android.",
     };
   }
   return (

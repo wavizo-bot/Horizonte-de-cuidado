@@ -23,7 +23,7 @@ import { navigate } from "../navigation";
 import { formatLong, formatShortYear, todayISO } from "../lib/date";
 import { careModelOf, lastDone, nextScheduled } from "../lib/schedule";
 import { groupMembers, groupNextMeeting, renderTemplate, suggestedCategory } from "../lib/selectors";
-import { contactChannelLabel, contactOutcomeLabel, formatPhone, whatsappLink } from "../lib/whatsapp";
+import { contactChannelLabel, contactOutcomeLabel, formatPhone, whatsappLink, whatsappNumber } from "../lib/whatsapp";
 import { messageCategoryLabel } from "../lib/whatsapp";
 import type { Appointment, ContactChannel, ContactOutcome, MessageCategory } from "../types";
 
@@ -305,7 +305,12 @@ export function MessagesView({ routePatientId }: { routePatientId?: string }) {
                     <Button
                       variant="ghost"
                       icon="external"
-                      onClick={() => { window.location.href = `tel:+${patient.phone?.replace(/\D/g, "")}`; }}
+                      onClick={() => {
+                        // Mesmo formato internacional do WhatsApp: o discador
+                        // precisa do +55 para completar a ligação.
+                        const number = whatsappNumber(patient.phone, state.settings.defaultDdd);
+                        if (number) window.location.href = `tel:+${number}`;
+                      }}
                     >
                       Ligar
                     </Button>

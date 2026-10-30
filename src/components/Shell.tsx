@@ -186,10 +186,14 @@ export function Shell({ route, children }: { route: Route; children: ReactNode }
       </aside>
 
       <div className="mobile-bar">
-        <button className="mobile-bar__menu" type="button" onClick={() => setMenuOpen(true)} aria-label="Abrir menu">
-          <Icon name="menu" size={22} />
-        </button>
-        <button type="button" className="mobile-bar__brand" onClick={() => navigate({ name: "today" })}>
+        <button
+          type="button"
+          className="mobile-bar__brand"
+          onClick={() => setMenuOpen((open) => !open)}
+          aria-label={menuOpen ? "Fechar menu" : "Abrir menu"}
+          aria-expanded={menuOpen}
+          aria-controls="horizonte-drawer"
+        >
           <Logo />
         </button>
         <button
@@ -204,7 +208,7 @@ export function Shell({ route, children }: { route: Route; children: ReactNode }
 
       {menuOpen ? (
         <div className="drawer-backdrop" onMouseDown={(event) => event.target === event.currentTarget && setMenuOpen(false)}>
-          <aside className="drawer" aria-label="Menu">
+          <aside className="drawer" id="horizonte-drawer" role="dialog" aria-modal="true" aria-label="Menu">
             <button className="drawer__close" type="button" onClick={() => setMenuOpen(false)} aria-label="Fechar menu">
               <Icon name="x" size={20} />
             </button>

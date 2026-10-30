@@ -35,7 +35,7 @@
     "@type": "SoftwareApplication",
     "name": "Horizonte de Cuidado",
     "applicationCategory": "HealthApplication",
-    "operatingSystem": "Windows 10, Windows 11",
+    "operatingSystem": "Windows 10, Windows 11, Android 7.0+",
     "softwareVersion": "1.0.0",
     "description": "Ferramenta independente de organização de encaminhamentos, filas, agenda e comunicação para equipes de saúde mental.",
     "offers": { "@type": "Offer", "price": "0", "priceCurrency": "BRL" },
@@ -81,7 +81,7 @@
             <a class="button" href="#download">Baixar para Windows</a>
             <a class="button button--ghost" href="#por-dentro">Ver as telas</a>
           </div>
-          <p class="hero__note">Windows 10/11 · MSIX · dados no seu dispositivo · nuvem opcional</p>
+          <p class="hero__note">Windows 10/11 · Android 7+ · dados no seu dispositivo · nuvem opcional</p>
         </div>
         <div class="hero__shot">
           <img src="assets/screens/tela-hoje.webp" width="1366" height="768" alt="Tela Hoje do Horizonte de Cuidado com agenda do dia, prioridades da fila e lembretes, usando dados fictícios.">
@@ -186,13 +186,14 @@
             <img src="assets/screens/tela-celular-hoje.webp" width="390" height="844" alt="Versão móvel da tela Hoje, com menu, saudação e cartões de resumo.">
           </div>
           <div>
-            <p class="eyebrow">Também no celular</p>
+            <p class="eyebrow">Também no celular e no tablet</p>
             <h3>A mesma visão, em uma tela menor.</h3>
             <p>A interface é responsiva e mantém o essencial à mão quando você está em trânsito ou entre atendimentos.</p>
             <ul>
               <li>Menu compacto e navegação por toque.</li>
               <li>Cartões de resumo e lista de pacientes adaptados.</li>
-              <li>O pacote principal é Windows/MSIX; a versão web serve para demonstração.</li>
+              <li>Aplicativo Android nativo em preparação para o Google Play, em telefone e tablet, retrato e paisagem.</li>
+              <li>A versão web serve para demonstração e não acessa o Google Drive.</li>
             </ul>
           </div>
         </div>
@@ -271,25 +272,25 @@
         <div class="section__head">
           <p class="eyebrow">Compatibilidade</p>
           <h2>O que você precisa para usar.</h2>
-          <p>O pacote principal é Windows/MSIX. A interface também se adapta a telas menores, mas a nuvem é uma função do host Windows.</p>
+          <p>Há pacotes para Windows/MSIX e Android. A versão web serve para demonstração; a nuvem é uma função dos aplicativos instalados.</p>
         </div>
         <div class="req-grid">
           <article class="req-card">
             <h3>Requisitos</h3>
             <ul>
-              <li>Windows 10 versão 1809 (build 17763) ou superior, ou Windows 11.</li>
-              <li>Processador x64.</li>
+              <li>Windows 10 versão 1809 (build 17763) ou superior, ou Windows 11, em x64.</li>
               <li>Microsoft Edge WebView2 Runtime (incluído no Windows 11; instalável no Windows 10).</li>
-              <li>Cerca de 1 MB para o pacote de demonstração; os dados ocupam espaço adicional.</li>
+              <li>Android 7.0 (API 24) ou superior, em telefone ou tablet, retrato ou paisagem.</li>
+              <li>Cerca de 1 MB para o pacote Windows de demonstração; o Android usa poucos MB.</li>
               <li>Conta Google opcional para backup no Drive.</li>
             </ul>
           </article>
           <article class="req-card req-card--warn">
             <h3>Limitações conhecidas</h3>
             <ul>
-              <li>As funções locais funcionam offline; a nuvem depende de internet e do host Windows.</li>
+              <li>As funções locais funcionam offline; a nuvem depende de internet e do aplicativo instalado no Windows ou no Android.</li>
               <li>A versão web não acessa o Google Drive.</li>
-              <li>Limpar o armazenamento do navegador ou do pacote pode apagar os dados locais.</li>
+              <li>Limpar o armazenamento do navegador, do pacote ou dos dados do app Android pode apagar os dados locais.</li>
               <li>A chave de cifragem local fica no mesmo dispositivo; proteja o acesso ao perfil.</li>
               <li>O backup no Drive não tem criptografia adicional do aplicativo nesta versão.</li>
               <li>A importação de planilhas tolera formatos inconsistentes, mas não corrige todos os erros de origem.</li>
@@ -313,8 +314,9 @@
             </p>
             <p>
               O acesso ao Drive é limitado ao escopo <code>drive.appdata</code>. O app não lê os demais
-              arquivos, não compartilha arquivos e não usa o conteúdo para publicidade. O token do
-              Windows fica protegido por DPAPI. O usuário pode desconectar a conta a qualquer momento.
+              arquivos, não compartilha arquivos e não usa o conteúdo para publicidade. O token fica
+              protegido por DPAPI no Windows e no Android Keystore no Android. O usuário pode
+              desconectar a conta a qualquer momento.
             </p>
             <p class="limited-use">
               <strong>Google API Services — Limited Use.</strong> O uso de informações recebidas das
@@ -380,7 +382,7 @@
         <div class="faq">
           <details>
             <summary>Preciso de internet para usar?</summary>
-            <p>Não para as funções locais. Cadastro, agenda, filas, grupos, mensagens e relatórios funcionam offline. A nuvem e o backup no Google Drive dependem de internet e do aplicativo Windows instalado.</p>
+            <p>Não para as funções locais. Cadastro, agenda, filas, grupos, mensagens e relatórios funcionam offline. A nuvem e o backup no Google Drive dependem de internet e do aplicativo instalado no Windows ou no Android.</p>
           </details>
           <details>
             <summary>O aplicativo envia mensagens pelo WhatsApp sozinho?</summary>
@@ -411,7 +413,11 @@
             <p>Baixe o pacote <code>.msix</code> e o certificado público <code>.cer</code> da mesma versão. O certificado de teste precisa ser confiável no computador; em muitos ambientes isso exige administrador. Depois, abra o <code>.msix</code>. Em produção, a Microsoft Store reassina o pacote.</p>
           </details>
           <details>
-            <summary>Posso usar em mais de um computador?</summary>
+            <summary>Como instalo no Android?</summary>
+            <p>A versão Android está em preparação para o Google Play, com o pacote <code>horizonte.de.cuidado</code>, para Android 7.0 ou superior em telefone ou tablet. Quando publicada, instale pela ficha da loja; não é necessário instalar certificado nem ativar fontes desconhecidas. O login no Drive usa o seletor nativo de contas do Android.</p>
+          </details>
+          <details>
+            <summary>Posso usar em mais de um computador ou aparelho?</summary>
             <p>Sim, com o backup opcional no Google Drive. Cada dispositivo envia operações separadas; edições concorrentes são preservadas para decisão do usuário, em vez de sobrescrever uma à outra. Sem nuvem, use exportação/importação JSON.</p>
           </details>
           <details>
@@ -430,8 +436,8 @@
         </div>
         <div>
           <p>
-            Horizonte de Cuidado is a Windows/MSIX organizer for mental-health teams. It brings
-            referrals, triage queues, recurring groups, individual appointments, WhatsApp-ready
+            Horizonte de Cuidado is a Windows/MSIX and Android organizer for mental-health teams. It
+            brings referrals, triage queues, recurring groups, individual appointments, WhatsApp-ready
             messages and 90-day planning into one place. It is an independent support tool — not an
             electronic health record, official government system or medical device. Patient data
             stays on the device, encrypted locally; Google Drive backup is optional and uses the
@@ -445,7 +451,7 @@
     <section class="download" id="download">
       <div class="download__inner">
         <div>
-          <p class="eyebrow" style="color:var(--sand)">Demonstração para Windows</p>
+          <p class="eyebrow" style="color:var(--sand)">Baixe o aplicativo</p>
           <h2>Leve o Horizonte para a sua equipe.</h2>
           <p>
             Pacote MSIX 1.0.0.0 para Windows x64, com dados fictícios de demonstração. O backup
@@ -457,6 +463,7 @@
             <span>≈ 1 MB</span>
             <span>Windows 10 1809+</span>
             <span>Versão 1.0.0.0</span>
+            <span>Android 7+ em preparação</span>
           </div>
         </div>
         <div class="download__card">
@@ -473,10 +480,11 @@
             <a class="button button--ghost" href="https://github.com/wavizo-bot/Horizonte-de-cuidado">Ver no GitHub</a>
           </div>
           <p class="download__note">
-            A demonstração web usa dados fictícios e não acessa o Google Drive; o pacote Windows é a
-            versão completa para uso local com backup opcional. Certificado de teste, uso local: a
-            Microsoft Store reassina o pacote em produção. Não instale certificados de origem
-            desconhecida. Em ambiente institucional, prefira Intune/GPO ou a Store.
+            A demonstração web usa dados fictícios e não acessa o Google Drive. Os pacotes Windows e
+            Android são as versões completas para uso local com backup opcional. Certificado de teste,
+            uso local: a Microsoft Store reassina o pacote em produção. Não instale certificados de
+            origem desconhecida. Em ambiente institucional, prefira Intune/GPO ou a Store. A versão
+            Android será distribuída pelo Google Play.
           </p>
         </div>
       </div>
