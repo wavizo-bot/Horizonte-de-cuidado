@@ -82,6 +82,15 @@ Saídas locais:
 
 A landing pública usa os arquivos em `docs/downloads/`. O certificado de teste serve apenas para instalação local; a Microsoft Store reassina o pacote em produção. O `.pfx` e a senha do certificado não são versionados.
 
+Para instalar o MSIX localmente, o certificado precisa estar na loja da máquina (o AppX não usa a loja do usuário). Em um PowerShell elevado:
+
+```powershell
+Import-Certificate -FilePath .\HorizonteDeCuidado-dev.cer `
+  -CertStoreLocation Cert:\LocalMachine\TrustedPeople
+```
+
+Sem isso, `Add-AppxPackage` falha com `0x800B0109` mesmo que `signtool verify /pa` valide o pacote no perfil do usuário.
+
 ## Gerar o app Android
 
 Pré-requisitos: JDK 17+, Android SDK 36 e a chave de upload em `android/keystore/horizonte-upload.keystore` (fora do git, configurada em `android/keystore.properties`).

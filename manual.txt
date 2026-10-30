@@ -177,6 +177,16 @@ Para a landing/Pages, copiar os dois arquivos para docs/downloads/.
 O .cer é público; o .pfx e a senha do certificado ficam em msix/ e são
 ignorados pelo git. A Microsoft Store reassina o pacote em produção.
 
+Instalação local do MSIX: o AppXSVC valida a assinatura em contexto de
+máquina, então confiar no certificado apenas em CurrentUser\Root ou
+CurrentUser\TrustedPeople NÃO basta. Em um PowerShell elevado:
+
+  Import-Certificate -FilePath .\HorizonteDeCuidado-dev.cer `
+    -CertStoreLocation Cert:\LocalMachine\TrustedPeople
+
+Depois, abra o .msix. Sem essa etapa, Add-AppxPackage falha com 0x800B0109
+mesmo que signtool verify /pa já valide o pacote no perfil do usuário.
+
 9. COMO GERAR O ANDROID
 -----------------------
 Pré-requisitos: JDK 17+, Android SDK 36, android/keystore.properties e a
@@ -216,6 +226,8 @@ Para gerar o APK universal a partir do AAB (bundletool 1.18.3):
     --ks-key-alias=horizonte-upload --ks-pass=pass:... --key-pass=pass:...
 Depois, extrair universal.apk do .apks e instalar. O APK universal é assinado
 com a upload key local; ele não substitui o teste da build assinada pelo Play.
+A pasta entregas/android/ reúne o AAB, o mapping, os APKs, o .apks e um
+LEIA-ME.txt de upload (ignorada pelo git); os hashes estão na seção 15.
 
 10. NUVEM GOOGLE DRIVE E OAUTH
 ------------------------------
@@ -361,9 +373,15 @@ Testes Windows/MSIX realizados:
 - Executável de msix/staging testado com os documentos legais atualizados
   (título "Horizonte de Cuidado", URL app.horizonte.local, política servida
   com "Android Keystore").
-- A instalação local do MSIX ainda falha com 0x800B0109 porque o certificado
-  de teste não está confiável; importar para Cert:\CurrentUser\Root exige
-  UAC/UI. O executável de staging foi testado diretamente.
+- O certificado de teste foi importado sem UI para CurrentUser\Root e
+  CurrentUser\TrustedPeople via X509Store; signtool verify /pa valida o MSIX.
+  Ainda assim, Add-AppxPackage falha com 0x800B0109 porque o AppXSVC exige o
+  certificado em LocalMachine\TrustedPeople (ou LocalMachine\Root), o que
+  depende de sessão elevada/UAC.
+- O payload do MSIX final foi desempacotado com makeappx e executado
+  diretamente: janela "Horizonte de Cuidado" aberta, WebView2 renderizando a
+  tela Hoje e processo respondendo; fechamento normal. Falta apenas o teste de
+  instalação AppX registrada em sessão elevada.
 
 Build Android verificada:
 - versionCode=1, versionName=1.0.0, minSdk=24, targetSdk=36.
@@ -440,8 +458,9 @@ APK são artefatos locais; o AAB é o arquivo a enviar ao Play.
   adb pair/adb connect antes dos testes finais.
 - Emulador caderno_phone não inicia com aceleração (virtualização desativada
   no firmware); o teste de tablet precisa de aparelho físico.
-- O MSIX local pode falhar com 0x800B0109 enquanto o certificado de teste não
-  estiver confiável; testar o staging ou importar o .cer com UAC.
+- O MSIX local pode falhar com 0x800B0109 mesmo com o certificado confiável no
+  perfil do usuário; o AppX usa a loja da máquina. Importar o .cer em
+  LocalMachine\TrustedPeople com UAC ou testar o staging/payload extraído.
 
 17. PENDÊNCIAS
 --------------
@@ -453,8 +472,9 @@ APK são artefatos locais; o AAB é o arquivo a enviar ao Play.
 3. Testar em tablet físico, retrato e paisagem.
 4. Revisar os textos legais com o responsável; os documentos já estão
    publicados nas URLs públicas.
-5. Enviar o MSIX final ao Partner Center e concluir a listagem da Store;
-   depende das credenciais do console.
+5. Testar a instalação AppX do MSIX final em sessão elevada (certificado em
+   LocalMachine\TrustedPeople) e enviar ao Partner Center; o envio depende das
+   credenciais do console.
 6. Criar o app no Play Console, preencher a ficha (já preparada em
    entregas/play/), a segurança de dados, a classificação, o público-alvo e a
    URL de privacidade; enviar o AAB. Depende das credenciais do console.

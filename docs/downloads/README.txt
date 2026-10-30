@@ -13,9 +13,17 @@ O .msix é assinado com certificado de teste. O .cer é o certificado público
 correspondente. A Microsoft Store reassina o pacote em produção.
 
 Instalação local:
-1. Confie no certificado público .cer (pode exigir administrador).
+1. Abra o PowerShell como administrador e confie no certificado na loja da
+   máquina (a loja do usuário não basta para o AppX):
+
+   Import-Certificate -FilePath .\HorizonteDeCuidado-dev.cer `
+     -CertStoreLocation Cert:\LocalMachine\TrustedPeople
+
 2. Abra o .msix.
 3. Se a política da instituição bloquear sideload, use Intune/GPO ou a Store.
+
+Sem o passo 1, o Windows pode recusar o pacote com o erro 0x800B0109
+("o certificado raiz da assinatura deve ser confiável").
 
 O pacote inclui o cliente OAuth Desktop do projeto. O backup no Google Drive
 é opcional, usa a conta do próprio usuário e o escopo mínimo drive.appdata.
