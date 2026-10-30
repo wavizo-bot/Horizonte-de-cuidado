@@ -284,10 +284,9 @@ LOGIN ANDROID RESOLVIDO (versionCode 2):
 - APK de teste: entregas/android/horizonte-1.0.0-vc2.apk, versionCode 2,
   SHA-256 857C42E70AE5EE9DB188CAC7B99256BF12DED1B9E63DE50EFD70BBBE986A5E2B.
 - Teste em 29/10/2026 no telefone 25069PTEBG (Android 16/API 36): o seletor
-  abriu, a conta wyj.juridico@gmail.com foi escolhida, o onActivityResult
-  voltou com resultCode=-1, o token drive.appdata foi validado e o DriveLogin
-  concluiu. A tela mostrou "Conectado" e "Última sincronização em 29/10/2026,
-  23:43:22".
+  abriu, a conta de teste foi escolhida, o onActivityResult voltou com
+  resultCode=-1, o token drive.appdata foi validado e o DriveLogin concluiu.
+  A tela mostrou "Conectado" e "Última sincronização em 29/10/2026, 23:43:22".
 - Ainda falta testar a restauração (apagar os dados locais e puxar da nuvem)
   e validar a build assinada pelo Play com o SHA-1 do App Signing.
 
@@ -512,7 +511,10 @@ APK são artefatos locais; o AAB é o arquivo a enviar ao Play.
    publicados nas URLs públicas.
 5. MSIX publicado na Microsoft Store em 29/10/2026 (ID 9NFVH4GZLNJF).
    Falta testar a instalação AppX local em sessão elevada (certificado em
-   LocalMachine\TrustedPeople) e o fluxo de atualização pela Store.
+   LocalMachine\TrustedPeople) e o fluxo de atualização pela Store. Corrigir
+   no Partner Center a URL de privacidade (hoje aponta para um blob do GitHub,
+   que mostra o código-fonte) para a URL do Pages e a grafia do nome para
+   "Horizonte de Cuidado".
 6. Criar o app no Play Console, preencher a ficha (já preparada em
    entregas/play/), a segurança de dados, a classificação, o público-alvo e a
    URL de privacidade; enviar o AAB. Depende das credenciais do console.
