@@ -20,6 +20,17 @@ import {
 } from "../components/ui";
 import { addDays, formatShortYear, todayISO, weekdayName } from "../lib/date";
 import { SLOT_LABELS, WEEKDAY_ORDER, defaultWeeklyCapacity } from "../lib/defaults";
+
+// Rótulos do cabeçalho da tabela de capacidade com hifenização suave (U+00AD).
+// O travessão só aparece quando a coluna é estreita demais para a palavra
+// inteira; em telas largas o rótulo continua em uma linha.
+const SLOT_HEADS: Record<SlotType, string> = {
+  triage: "Matrici\u00ADamento",
+  individual: "Indivi\u00ADdual",
+  group: "Grupo",
+  collective: "Cole\u00ADtivo",
+  makeup: "Reposi\u00ADção",
+};
 import { getAppVersion, hostPlatform, openTextFile, saveTextFile } from "../lib/host";
 import { recurrenceLabel } from "../lib/date";
 import { messageCategoryLabel } from "../lib/whatsapp";
@@ -313,7 +324,7 @@ function AgendaTab({
             <div className="capacity-grid">
               <div className="capacity-grid__head">
                 <span>Dia</span>
-                {SLOTS.map((slot) => <span key={slot}>{SLOT_LABELS[slot]}</span>)}
+                {SLOTS.map((slot) => <span key={slot}>{SLOT_HEADS[slot]}</span>)}
               </div>
               {WEEKDAY_ORDER.map((weekday) => {
                 const row = capacityRow(weekday, rows);

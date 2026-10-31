@@ -360,12 +360,17 @@ publicação nesta máquina; nenhuma credencial de console é versionada.
 ------------------------
   pnpm check              # TypeScript: sem erros
   pnpm test               # 33 testes em 3 arquivos: todos passaram
-  pnpm check:privacy      # 134 arquivos públicos; nenhum dado real
+  pnpm check:privacy      # arquivos públicos conferidos; nenhum dado real
+                          # (a contagem varia: hoje varre git + dist/ +
+                          # msix/staging/www; 30/10: 134; 31/10: 132)
   pnpm build              # build de produção + docs/app/
   node tools\visual-check.mjs   # QA visual com Playwright/Edge
   node tools\check-site.mjs     # landing: links, imagens, overflow, console
   node tools\make-screenshots.mjs
   node tools\make-play-assets.mjs
+  # Captura o app nos viewports CSS do tablet (1164x777 e 776x1163):
+  # 1) pnpm exec vite preview --port 4173  (em segundo plano)
+  # 2) APP_URL=http://127.0.0.1:4173/ OUT=<pasta> node tools\emulate-tablet.mjs
 
 Servidores locais:
 - app: http://127.0.0.1:4180/
@@ -390,8 +395,20 @@ Testes Android realizados:
   abriu normalmente.
 - WebView debugging desativado no release; testes de UI no release são feitos
   por ADB/screenshot, não por CDP.
-- Rotação, telefone e tablet: o layout usa WindowInsets/edge-to-edge; o teste
-  em tablet físico ainda não foi feito (emulador sem virtualização no firmware).
+- Rotação, telefone e tablet: o layout usa WindowInsets/edge-to-edge.
+- Tablet físico Xiaomi 2410CRP4CG (Android 16/API 36, 3200x2136 @440dpi,
+  depuração sem fio): vc2 instalado; onboarding, Hoje, Pacientes, Agenda (dia
+  e grade mensal), Ajustes e Nuvem ("Pronto para conectar") em retrato e
+  paisagem; rotação original restaurada e app deixado em Hoje. O viewport CSS
+  do tablet é pixels/2,75 (~1164x777 em paisagem) — faixa que revelou a
+  sobreposição corrigida no vc3.
+- Correção das sobreposições verificada NO APARELHO com o vc3
+  (versionCode=3 por dumpsys): Ajustes > Agenda e capacidade com rótulos em
+  uma linha (paisagem) e quebra com travessão (retrato: MATRICI-/AMENTO,
+  INDIVI-/DUAL, REPOSI-/ÇÃO); Pacientes com chips em duas linhas e datas
+  limpas nas duas orientações. Conta Google encontrada conectada no tablet
+  na checagem (backup automático sincronizando dados fictícios) —
+  desconectada; o caderno local com 18 conflitos ficou intacto.
 
 Testes Windows/MSIX realizados:
 - Janela própria "Entrar com o Google" abre como filho da janela principal;
@@ -417,10 +434,12 @@ Testes Windows/MSIX realizados:
   12 pacientes e sincronização às 08:29:56.
 
 Build Android verificada:
-- versionCode=2, versionName=1.0.0, minSdk=24, targetSdk=36.
+- versionCode=3, versionName=1.0.0, minSdk=24, targetSdk=36 (confirmado com
+  aapt no APK e dumpsys no aparelho).
 - R8 full mode: isOptimizationsEnabled=true, isObfuscationEnabled=true,
   isShrinkingEnabled=true; minApiLevel=24.
-- mapping.txt local idêntico ao proguard.map do AAB.
+- mapping.txt local idêntico ao proguard.map do AAB (e igual ao do vc2, pois o
+  código Android não mudou entre vc2 e vc3).
 - assets/app idêntico a docs/app (28 arquivos).
 - Permissões: INTERNET; WRITE_EXTERNAL_STORAGE com maxSdkVersion=28 (somente
   exportação em Downloads no Android 7–9); AD_ID removida explicitamente.
@@ -442,9 +461,16 @@ Build Android verificada:
 
 15. VERSÕES E HASHES
 --------------------
-- Android 1.0.0 (versionCode 2) — correção do login Google (singleTop +
-  SHA-1 da upload key), telefone/tablet, retrato/paisagem, OAuth nativo, Drive
-  opcional, R8 full mode. Login + backup validados no telefone 25069PTEBG.
+- Android 1.0.0 (versionCode 3) — correção de sobreposição de textos nas
+  tabelas em telas intermediárias (tablet ~1164 px CSS): grid de Ajustes em
+  uma coluna desde 1240 px, colunas e chips de Pacientes reequilibrados,
+  hifenes suaves no cabeçalho da capacidade (- keepattributes
+  SourceFile,LineNumberTable mantidos). Testado no tablet 2410CRP4CG em
+  retrato e paisagem; na nuvem, vc2 e vc3 compartilham o mesmo login.
+- Android 1.0.0 (versionCode 2) — correção do login Google (singleTask →
+  singleTop + SHA-1 da upload key), telefone/tablet, retrato/paisagem, OAuth
+  nativo, Drive opcional, R8 full mode. Login + backup validados no telefone
+  25069PTEBG.
 - Windows/MSIX 1.0.0.0 — publicado na Microsoft Store em 29/10/2026 (ID
   9NFVH4GZLNJF); MSIX local assinado com certificado de teste, landing,
   documentos legais e demonstração web. Nuvem com cliente OAuth Desktop;
@@ -453,18 +479,25 @@ Build Android verificada:
   wavizo.Horizontedecuidado_1.0.0.0_x64, SignatureKind Store, janela e
   WebView2 renderizados; Ajustes > Nuvem conectado com 12 pacientes.
 
-SHA-256 desta build:
+SHA-256 da build Android atual (vc3, de 31/10/2026):
+  AAB ............... 142AC05F000E827579D6778E2B78F2CD37BB5EA4C4EC3189B15AC0F3E5067F9E
+  APK release ....... ACC9835D697AB6FA54E02C65ACC85EAD8C5256DBD4FA5A29A8B84B08C30465D5
+  APK universal ..... B27E77F9C891B0BB05FE97425CC83717AEF42AF07ED3E0770326960B4EA80CA0
+  mapping.txt ....... 59E4241489A55722572724D9F037FB76FE3335CCB1CBD1C7BC137FBDB79E47C5
+
+SHA-256 da build vc2 anterior (não reenviar; é histórico):
   MSIX .............. DE45BB04A5F05D29C89075D39C75A2E5845EA5995798A1686ED54DED831FBBD8
   AAB ............... F05A4F985A6CFA2A8BB7397D90EE80E5351911C2DCA64878F993CCF997EED9DC
   APK release ....... 857C42E70AE5EE9DB188CAC7B99256BF12DED1B9E63DE50EFD70BBBE986A5E2B
   APK universal ..... 85045C9A1D8C14FDD3CF5155B07E85AD1D58739FB28E31BEB6B1C9E7127D08D1
   mapping.txt ....... 59E4241489A55722572724D9F037FB76FE3335CCB1CBD1C7BC137FBDB79E47C5
 
-A build vc1 anterior tinha AAB CA7642..., APK release 85CCC0..., APK universal
-99CE19... e mapping 254128...; não usar esses arquivos no próximo envio.
+A build vc1 tinha AAB CA7642..., APK release 85CCC0..., APK universal
+99CE19... e mapping 254128...; esses arquivos não podem mais ser enviados.
 
 O MSIX em docs/downloads/ é o mesmo de entregas/ (mesmo SHA-256). O AAB e o
-APK são artefatos locais; o AAB é o arquivo a enviar ao Play.
+APK são artefatos locais; o AAB horizonte-1.0.0.aab (vc3) é o arquivo a
+enviar ao Play.
 
 16. ARMADILHAS CONHECIDAS
 -------------------------
@@ -505,7 +538,23 @@ APK são artefatos locais; o AAB é o arquivo a enviar ao Play.
 - Android: o telefone pode cair do ADB sem fio; reconectar com
   adb pair/adb connect antes dos testes finais.
 - Emulador caderno_phone não inicia com aceleração (virtualização desativada
-  no firmware); o teste de tablet precisa de aparelho físico.
+  no firmware); com TCG o vCPU para ou o processo crasha com 0xC0000005
+  (SwiftShader), mesmo com a imagem android-36 google_apis. O teste de tablet
+  precisa de aparelho físico (metodologia na seção 13).
+- Tablet: o viewport CSS é pixels físicos / (dpi/160) — no 2410CRP4CG resta
+  ~1164x777 em paisagem, faixa entre os breakpoints 1080 e 1240. Verificar
+  layouts nessa largura com node tools\emulate-tablet.mjs antes de regerar.
+- Rótulos longos ("Matriciamento") em colunas estreitas: usar a hifenização
+  suave U+00AD embutida no texto (constante SLOT_HEADS), não
+  overflow-wrap:anywhere, que corta palavras sem travessão.
+- Paciente .apk/.apks: capturar com
+  cmd /c "adb ... exec-out screencap -p > arquivo.png"; o redirecionamento do
+  PowerShell (> / >>) grava UTF-16 e corrompe o PNG.
+- bundletool: Expand-Archive recusa a extensão .apks (copiar para .zip antes)
+  e no modo universal o APK sai na RAIZ do pacote (universal.apk), não em
+  splits/.
+- check:privacy varre git + dist/ + msix/staging/www: a contagem de arquivos
+  muda conforme o que está de build; relacionar sempre com a data.
 - O MSIX local pode falhar com 0x800B0109 mesmo com o certificado confiável no
   perfil do usuário; o AppX usa a loja da máquina. Importar o .cer em
   LocalMachine\TrustedPeople com UAC ou testar o staging/payload extraído.
@@ -514,12 +563,15 @@ APK são artefatos locais; o AAB é o arquivo a enviar ao Play.
 --------------
 1. Login + backup Android concluídos no APK vc2 assinado com a upload key.
    Restauração conferida no app Windows com a mesma conta (12 pacientes).
-   Falta o teste destrutivo no Android e validar o AAB vc2 no teste interno do
+   Falta o teste destrutivo no Android e validar o AAB no teste interno do
    Play com o SHA-1 do App Signing.
 2. Teste de cancelamento concluído no APK universal vc1; o web app é o mesmo
-   no vc2. Reinstalar o APK final em outros aparelhos de teste quando
+   no vc2/vc3. Reinstalar o APK final em outros aparelhos de teste quando
    necessário.
-3. Testar em tablet físico, retrato e paisagem.
+3. Teste em tablet físico CONCLUÍDO (2410CRP4CG, retrato e paisagem): vc2
+   navegado por completo e correção de sobreposições validada no aparelho com
+   o vc3, nas duas orientações. Nuvem desconectada no tablet pessoal após
+   constatar conta ativa com sync (caderno local preservado).
 4. Revisar os textos legais com o responsável; os documentos já estão
    publicados nas URLs públicas.
 5. MSIX publicado na Microsoft Store em 29/10/2026 (ID 9NFVH4GZLNJF).
@@ -529,7 +581,8 @@ APK são artefatos locais; o AAB é o arquivo a enviar ao Play.
    Corrigir no Partner Center a URL de privacidade (hoje aponta para um blob
    do GitHub, que mostra o código-fonte) para a URL do Pages e a grafia do
    nome para "Horizonte de Cuidado".
-6. No Play Console, enviar o AAB vc2 ao teste interno, preencher/confirmar a
+6. No Play Console, enviar o AAB vc3 (horizonte-1.0.0.aab,
+   142AC05F...) ao teste interno em vez do vc2, preencher/confirmar a
    ficha (entregas/play/), a segurança de dados, a classificação, o
    público-alvo e a URL de privacidade; instalar a build assinada pelo Play e
    repetir login + backup. Depende das credenciais do console.
