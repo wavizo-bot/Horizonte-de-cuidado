@@ -15,7 +15,9 @@ import sharp from "sharp";
 
 const root = process.cwd();
 const appUrl = process.env.APP_URL || "http://127.0.0.1:4190/app/";
-const out = `${root}/entregas/play`;
+const out = `${root}/entregas/android/loja`;
+const pkg = JSON.parse(await readFile(`${root}/package.json`, "utf8"));
+const versionCode = (await readFile(`${root}/android/version-code.txt`, "utf8")).trim();
 const edge = "C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe";
 const chrome = "C:/Program Files/Google/Chrome/Application/chrome.exe";
 const executablePath = process.env.BROWSER_PATH || (existsSync(edge) ? edge : chrome);
@@ -100,7 +102,7 @@ await shot("telefone-05-mensagens");
 await go("filas");
 await shot("telefone-06-filas");
 
-// Tablet: as capturas 1366x768 já existentes mostram o layout de tablet.
+// Tablet: as capturas 1366x768 vêm da loja Windows (entregas/windows/loja).
 for (const [source, target] of [
   ["01-hoje.png", "tablet-01-hoje.png"],
   ["02-agenda.png", "tablet-02-agenda.png"],
@@ -109,7 +111,7 @@ for (const [source, target] of [
   ["05-filas.png", "tablet-05-filas.png"],
   ["06-relatorios.png", "tablet-06-relatorios.png"],
 ]) {
-  const from = `${root}/entregas/store/${source}`;
+  const from = `${root}/entregas/windows/loja/${source}`;
   if (existsSync(from)) {
     await copyFile(from, `${out}/${target}`);
     console.log(`play ${target} (1366x768)`);
@@ -134,7 +136,7 @@ const ficha = `# Google Play — Horizonte de Cuidado
 
 - Nome do aplicativo: **Horizonte de Cuidado**
 - Pacote: \`horizonte.de.cuidado\`
-- Versão: 1.0.0 (versionCode 1)
+- Versão: ${pkg.version} (versionCode ${versionCode})
 - Idioma padrão: Português (Brasil)
 - Categoria: Medicina (ferramenta de organização; não é dispositivo médico)
 - Público-alvo: profissionais e equipes de saúde mental, 18+
@@ -294,9 +296,11 @@ relatórios, importação/exportação e backup opcional no Google Drive.
    estar cadastrado no cliente OAuth Android do projeto. Para testar o APK
    local, cadastre também o SHA-1 da upload key
    (\`35:14:75:E6:C6:E1:EE:F8:DF:3F:5D:03:70:C5:DC:5C:A1:B8:74:F6\`).
-3. Enviar \`app-release.aab\` em teste interno; instalar pelo Play e concluir o
-   login Google/Drive no aparelho. O APK assinado localmente não autentica
-   enquanto o SHA-1 da upload key não estiver no Console.
+3. Enviar \`entregas/android/app-atual.aab\` ao Play (o AAB vc3 foi enviado
+   em 12/11/2026 como primeira versão de teste fechado); instalar pelo
+   Play e concluir o login Google/Drive no aparelho. O APK assinado
+   localmente não autentica enquanto o SHA-1 da upload key não estiver
+   no Console.
 4. Preencher a ficha (assets, textos, URLs), a segurança de dados, a
    classificação de conteúdo e o público-alvo 18+.
 5. Revisar os documentos legais e publicar a política de privacidade e o

@@ -6,7 +6,7 @@ import sharp from "sharp";
 const root = process.cwd();
 const appUrl = process.env.APP_URL || "http://127.0.0.1:4180/";
 const outWeb = `${root}/docs/assets/screens`;
-const outStore = `${root}/entregas/store`;
+const outStore = `${root}/entregas/windows/loja`;
 const edge = "C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe";
 const chrome = "C:/Program Files/Google/Chrome/Application/chrome.exe";
 const executablePath = process.env.BROWSER_PATH || (existsSync(edge) ? edge : chrome);

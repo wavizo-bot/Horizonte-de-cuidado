@@ -86,7 +86,9 @@ Get-ChildItem $staging -Recurse -Force -Directory |
   Where-Object { $_.Name -like '*.WebView2' } |
   ForEach-Object { Remove-Item $_.FullName -Recurse -Force }
 
-$outDir = Join-Path $root 'entregas'
+# Regra 2.4 (C:\APPS\Regras.txt): pacote vigente em entregas/windows/ e
+# versoes anteriores em entregas/windows/arquivo/.
+$outDir = Join-Path (Join-Path $root 'entregas') 'windows'
 New-Item -ItemType Directory -Force -Path $outDir | Out-Null
 $out = Join-Path $outDir ("HorizonteDeCuidado_{0}_x64.msix" -f $version4)
 
@@ -139,6 +141,32 @@ if ($leak) { throw 'Dados de perfil WebView2 encontrados no pacote.' }
 Remove-Item $checkDir -Recurse -Force
 
 $hash = (Get-FileHash $out -Algorithm SHA256).Hash
-Write-Host "OK: $out" -ForegroundColor Green
+
+# Regra 2.4: a versao anterior vai para arquivo/ e a nova assume app-atual.msix.
+$current = Join-Path $outDir 'app-atual.msix'
+$archive = Join-Path $outDir 'arquivo'
+if (Test-Path $current) {
+  New-Item -ItemType Directory -Force -Path $archive | Out-Null
+  $oldVersion = $null
+  Add-Type -AssemblyName System.IO.Compression.FileSystem
+  $zip = [System.IO.Compression.ZipFile]::OpenRead($current)
+  try {
+    $entry = $zip.GetEntry('AppxManifest.xml')
+    if ($entry) {
+      $reader = New-Object System.IO.StreamReader($entry.Open(), $utf8)
+      $manifestText = $reader.ReadToEnd()
+      $reader.Close()
+      if ($manifestText -match '<Identity\b[^>]*Version="([0-9.]+)"') { $oldVersion = $Matches[1] }
+    }
+  } finally { $zip.Dispose() }
+  if ($oldVersion) {
+    Move-Item $current (Join-Path $archive ("HorizonteDeCuidado_{0}_x64.msix" -f $oldVersion)) -Force
+  } else {
+    Move-Item $current (Join-Path $archive ("app-atual-{0:yyyyMMdd-HHmmss}.msix" -f (Get-Date))) -Force
+  }
+}
+Move-Item $out $current -Force
+
+Write-Host "OK: $current" -ForegroundColor Green
 Write-Host "SHA256: $hash"
 Write-Host "Certificado publico: $cer"

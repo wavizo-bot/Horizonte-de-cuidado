@@ -77,8 +77,8 @@ O script compila o host C#/.NET Framework 4.8, limpa o staging, carimba a versã
 
 Saídas locais:
 
-- `entregas/HorizonteDeCuidado_1.0.0.0_x64.msix`
-- `entregas/HorizonteDeCuidado-dev.cer`
+- `entregas/windows/app-atual.msix` — pacote vigente; o script arquiva a versão anterior em `entregas/windows/arquivo/` (regra 2.4)
+- `entregas/windows/HorizonteDeCuidado-dev.cer`
 
 A landing pública usa os arquivos em `docs/downloads/`. O certificado de teste serve apenas para instalação local; a Microsoft Store reassina o pacote em produção. O `.pfx` e a senha do certificado não são versionados.
 
@@ -134,7 +134,7 @@ msix/                manifesto, host C# WinForms/WebView2 e script de build
 android/             projeto Gradle, código Java, recursos, versão e chave local
 tools/               importação, assets, capturas, QA e servidor da landing
 tests/               testes Vitest
-entregas/            artefatos locais gerados (ignorado pelo git)
+entregas/            pacotes e assets de loja (ignorado pelo git)
 dados/               importação real da planilha (ignorado pelo git)
 manual.txt           manual de retomada
 log.txt              diário local de etapas (ignorado pelo git)
@@ -144,9 +144,9 @@ log.txt              diário local de etapas (ignorado pelo git)
 
 ## Versão atual
 
-**1.0.0** — Android `versionCode` 2; Windows/MSIX `1.0.0.0`.
+**1.0.0** — Android `versionCode` 3 (enviado ao teste fechado do Play em 12/11/2026); Windows/MSIX `1.0.0.0` (publicado na Microsoft Store em 29/10/2026).
 
-SHA-256 do MSIX em `entregas/` e em `docs/downloads/`:
+SHA-256 do MSIX em `entregas/windows/` e em `docs/downloads/`:
 
 ```text
 DE45BB04A5F05D29C89075D39C75A2E5845EA5995798A1686ED54DED831FBBD8
@@ -155,9 +155,9 @@ DE45BB04A5F05D29C89075D39C75A2E5845EA5995798A1686ED54DED831FBBD8
 SHA-256 dos artefatos Android desta build (recalculados a cada build):
 
 ```text
-AAB ............... F05A4F985A6CFA2A8BB7397D90EE80E5351911C2DCA64878F993CCF997EED9DC
-APK release ....... 857C42E70AE5EE9DB188CAC7B99256BF12DED1B9E63DE50EFD70BBBE986A5E2B
-APK universal ..... 85045C9A1D8C14FDD3CF5155B07E85AD1D58739FB28E31BEB6B1C9E7127D08D1
+AAB ............... 142AC05F000E827579D6778E2B78F2CD37BB5EA4C4EC3189B15AC0F3E5067F9E
+APK release ....... ACC9835D697AB6FA54E02C65ACC85EAD8C5256DBD4FA5A29A8B84B08C30465D5
+APK universal ..... B27E77F9C891B0BB05FE97425CC83717AEF42AF07ED3E0770326960B4EA80CA0
 mapping.txt ....... 59E4241489A55722572724D9F037FB76FE3335CCB1CBD1C7BC137FBDB79E47C5
 ```
 
@@ -185,11 +185,11 @@ Identidade Android:
 - [Documentos legais](docs/politica-de-privacidade.html)
 - [Suporte](docs/suporte.html)
 - Microsoft Store: <https://apps.microsoft.com/detail/9NFVH4GZLNJF> (deep link: <ms-windows-store://pdp/?productid=9NFVH4GZLNJF>)
-- Google Play: envio pendente; pacote `horizonte.de.cuidado`.
+- Google Play: teste fechado em andamento (AAB 1.0.0/versionCode 3 enviado em 12/11/2026); pacote `horizonte.de.cuidado`.
 
 ## Publicação
 
-A ficha do Google Play é gerada localmente em `entregas/play/` por `node tools/make-play-assets.mjs` (pasta ignorada pelo git). Ela contém textos, ícone, feature graphic, seis capturas de telefone e seis de tablet, respostas de segurança de dados, classificação de conteúdo e checklist de envio.
+A ficha do Google Play é gerada localmente em `entregas/android/loja/` por `node tools/make-play-assets.mjs` (pasta ignorada pelo git). Ela contém textos, ícone, feature graphic, seis capturas de telefone e seis de tablet, respostas de segurança de dados, classificação de conteúdo e checklist de envio.
 
 - Windows/MSIX publicado na Microsoft Store em 29/10/2026: ID `9NFVH4GZLNJF`.
 - Política de privacidade pública: <https://wavizo-bot.github.io/Horizonte-de-cuidado/politica-de-privacidade.html>
