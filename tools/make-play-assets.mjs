@@ -296,11 +296,10 @@ relatórios, importação/exportação e backup opcional no Google Drive.
    estar cadastrado no cliente OAuth Android do projeto. Para testar o APK
    local, cadastre também o SHA-1 da upload key
    (\`35:14:75:E6:C6:E1:EE:F8:DF:3F:5D:03:70:C5:DC:5C:A1:B8:74:F6\`).
-3. Enviar \`entregas/android/app-atual.aab\` ao Play (o AAB vc3 foi enviado
-   em 12/11/2026 como primeira versão de teste fechado); instalar pelo
-   Play e concluir o login Google/Drive no aparelho. O APK assinado
-   localmente não autentica enquanto o SHA-1 da upload key não estiver
-   no Console.
+3. Enviar \`entregas/android/horizonte-${pkg.version}-vc${versionCode}.aab\` ao
+   Play; instalar pelo Play e concluir o login Google/Drive no aparelho.
+   O APK assinado localmente não autentica enquanto o SHA-1 da upload
+   key não estiver no Console.
 4. Preencher a ficha (assets, textos, URLs), a segurança de dados, a
    classificação de conteúdo e o público-alvo 18+.
 5. Revisar os documentos legais e publicar a política de privacidade e o

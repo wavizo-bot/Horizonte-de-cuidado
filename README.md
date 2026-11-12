@@ -77,7 +77,7 @@ O script compila o host C#/.NET Framework 4.8, limpa o staging, carimba a versã
 
 Saídas locais:
 
-- `entregas/windows/app-atual.msix` — pacote vigente; o script arquiva a versão anterior em `entregas/windows/arquivo/` (regra 2.4)
+- `entregas/windows/HorizonteDeCuidado_1.0.0.0_x64.msix` — pacote vigente (nome = programa + versão); o script arquiva versões anteriores em `entregas/windows/arquivo/` (regra 2.4)
 - `entregas/windows/HorizonteDeCuidado-dev.cer`
 
 A landing pública usa os arquivos em `docs/downloads/`. O certificado de teste serve apenas para instalação local; a Microsoft Store reassina o pacote em produção. O `.pfx` e a senha do certificado não são versionados.

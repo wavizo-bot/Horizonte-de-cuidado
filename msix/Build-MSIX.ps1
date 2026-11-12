@@ -142,31 +142,17 @@ Remove-Item $checkDir -Recurse -Force
 
 $hash = (Get-FileHash $out -Algorithm SHA256).Hash
 
-# Regra 2.4: a versao anterior vai para arquivo/ e a nova assume app-atual.msix.
-$current = Join-Path $outDir 'app-atual.msix'
+# Regra 2.4: o vigente e o pacote com nome Programa_versao_x64.msix na raiz;
+# pacotes de versoes anteriores vao para arquivo/.
 $archive = Join-Path $outDir 'arquivo'
-if (Test-Path $current) {
-  New-Item -ItemType Directory -Force -Path $archive | Out-Null
-  $oldVersion = $null
-  Add-Type -AssemblyName System.IO.Compression.FileSystem
-  $zip = [System.IO.Compression.ZipFile]::OpenRead($current)
-  try {
-    $entry = $zip.GetEntry('AppxManifest.xml')
-    if ($entry) {
-      $reader = New-Object System.IO.StreamReader($entry.Open(), $utf8)
-      $manifestText = $reader.ReadToEnd()
-      $reader.Close()
-      if ($manifestText -match '<Identity\b[^>]*Version="([0-9.]+)"') { $oldVersion = $Matches[1] }
-    }
-  } finally { $zip.Dispose() }
-  if ($oldVersion) {
-    Move-Item $current (Join-Path $archive ("HorizonteDeCuidado_{0}_x64.msix" -f $oldVersion)) -Force
-  } else {
-    Move-Item $current (Join-Path $archive ("app-atual-{0:yyyyMMdd-HHmmss}.msix" -f (Get-Date))) -Force
+Get-ChildItem $outDir -Filter 'HorizonteDeCuidado_*_x64.msix' |
+  Where-Object { $_.FullName -ne $out } |
+  ForEach-Object {
+    New-Item -ItemType Directory -Force -Path $archive | Out-Null
+    Move-Item $_.FullName (Join-Path $archive $_.Name) -Force
+    Write-Host "Versao anterior arquivada: $($_.Name)"
   }
-}
-Move-Item $out $current -Force
 
-Write-Host "OK: $current" -ForegroundColor Green
+Write-Host "OK: $out" -ForegroundColor Green
 Write-Host "SHA256: $hash"
 Write-Host "Certificado publico: $cer"

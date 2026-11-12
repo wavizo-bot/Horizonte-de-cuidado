@@ -114,8 +114,8 @@ Raiz:
 - tools/               build, assets, capturas, importação, QA e Play
 - tests/               testes Vitest de agenda, importação e sync
 - entregas/            pacotes e assets de loja (ignorado pelo git)
-  - android/           app-atual.aab, mapping e LEIA-ME; arquivo/ e loja/
-  - windows/           app-atual.msix e .cer; arquivo/ e loja/
+  - android/           AAB vigente (nome = programa+versão+vc); arquivo/ e loja/
+  - windows/           MSIX vigente (nome = programa+versão) e .cer; arquivo/ e loja/
   - qa/                capturas de verificação da landing/app web
 - dados/               importação real da planilha (ignorado pelo git)
 - manual.txt           este arquivo
@@ -188,9 +188,9 @@ O script:
 7. valida o pacote desempacotando.
 
 Saídas:
-- entregas/windows/app-atual.msix (o script empacota com o nome da build,
-  valida e assume app-atual.msix; a versão anterior vai para
-  entregas/windows/arquivo/ com o nome da versão — regra 2.4)
+- entregas/windows/HorizonteDeCuidado_1.0.0.0_x64.msix (nome da build =
+  programa + versão, regra 2.4; versões anteriores vão para
+  entregas/windows/arquivo/)
 - entregas/windows/HorizonteDeCuidado-dev.cer
 
 Para a landing/Pages, copiar os dois arquivos para docs/downloads/.
@@ -247,9 +247,10 @@ Para gerar o APK universal a partir do AAB (bundletool 1.18.3):
 Depois, extrair universal.apk do .apks e instalar. O APK universal é assinado
 com a upload key local; ele não substitui o teste da build assinada pelo Play.
 A pasta entregas/android/ segue a regra 2.4 (C:\APPS\Regras.txt): o AAB
-vigente (app-atual.aab) e o mapping ficam na raiz; os APKs de teste e as
-versões anteriores vão para arquivo/; os assets de listagem ficam em
-loja/ (pasta ignorada pelo git); os hashes estão na seção 15.
+vigente (horizonte-1.0.0-vc3.aab — nome com programa+versão+versionCode)
+e o mapping ficam na raiz; os APKs de teste e as versões anteriores vão
+para arquivo/; os assets de listagem ficam em loja/ (pasta ignorada pelo
+git); os hashes estão na seção 15.
 
 10. NUVEM GOOGLE DRIVE E OAUTH
 ------------------------------
@@ -504,9 +505,11 @@ SHA-256 da build vc2 anterior (não reenviar; é histórico):
 A build vc1 tinha AAB CA7642..., APK release 85CCC0..., APK universal
 99CE19... e mapping 254128...; esses arquivos não podem mais ser enviados.
 
-O MSIX em docs/downloads/ é o mesmo de entregas/windows/app-atual.msix
-(mesmo SHA-256). O AAB e os APKs são artefatos locais; o AAB vigente
-app-atual.aab (vc3) foi enviado ao Play em 12/11/2026 (teste fechado).
+O MSIX em docs/downloads/ é o mesmo de
+entregas/windows/HorizonteDeCuidado_1.0.0.0_x64.msix (mesmo SHA-256). O
+AAB e os APKs são artefatos locais; o AAB vigente
+horizonte-1.0.0-vc3.aab foi enviado ao Play em 12/11/2026 (teste
+fechado).
 
 16. ARMADILHAS CONHECIDAS
 -------------------------
@@ -590,8 +593,9 @@ app-atual.aab (vc3) foi enviado ao Play em 12/11/2026 (teste fechado).
    Corrigir no Partner Center a URL de privacidade (hoje aponta para um blob
    do GitHub, que mostra o código-fonte) para a URL do Pages e a grafia do
    nome para "Horizonte de Cuidado".
-6. No Play Console, o AAB vc3 (app-atual.aab, 142AC05F...) já foi enviado
-   ao TESTE FECHADO e a URL de privacidade do Pages está no console;
+6. No Play Console, o AAB vc3 (horizonte-1.0.0-vc3.aab, 142AC05F...) já
+   foi enviado ao TESTE FECHADO e a URL de privacidade do Pages está no
+   console;
    faltam corrigir a grafia "Horizonte de cuidado" para "Horizonte de
    Cuidado" na listagem, instalar a build assinada pelo Play e repetir
    login + backup, e manter a ficha atualizada
