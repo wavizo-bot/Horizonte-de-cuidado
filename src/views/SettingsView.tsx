@@ -1089,7 +1089,7 @@ function CloudTab() {
           <SectionHeading
             eyebrow="Conflitos"
             title="Edições simultâneas"
-            description="Quando dois dispositivos alteram o mesmo registro, o aplicativo preserva as duas versões e pede sua decisão."
+            description="A maioria das edições simultâneas é mesclada automaticamente campo a campo: exclusão vence edição e itens com identificação são unidos. Aqui aparecem só os casos raros que a mesclagem não resolve — a decisão é sua."
             actions={<Badge tone={conflicts.length ? "warn" : "ok"}>{conflicts.length ? `${conflicts.length} pendente(s)` : "Sem pendências"}</Badge>}
           />
           {conflicts.length === 0 ? (

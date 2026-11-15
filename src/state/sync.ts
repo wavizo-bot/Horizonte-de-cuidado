@@ -9,6 +9,7 @@ import {
   buildPayload,
   createSyncMeta,
   mergePayloads,
+  migrateMeta,
   parsePayload,
   recordLocalChanges,
   resolveConflict as resolveConflictOp,
@@ -76,10 +77,11 @@ export function useDriveSync({ state, stateRef, applyExternalState, loaded }: Op
     void (async () => {
       const stored = await loadSecure<SyncMeta>(SYNC_KEY);
       if (!active) return;
-      const next = stored ?? createSyncMeta();
+      // Migração v1→v2 (conflitos legados resolvidos por opId, histórico-união).
+      const next = stored ? migrateMeta(stored) : createSyncMeta();
       metaRef.current = next;
       setMeta(next);
-      if (!stored) await saveSecure(SYNC_KEY, next);
+      if (!stored || next !== stored) await saveSecure(SYNC_KEY, next);
     })();
     return () => {
       active = false;
@@ -88,7 +90,7 @@ export function useDriveSync({ state, stateRef, applyExternalState, loaded }: Op
 
   const recordChanges = useCallback(
     (previous: AppState, next: AppState) => {
-      const current = metaRef.current ?? createSyncMeta();
+      const current = migrateMeta(metaRef.current);
       const updated = recordLocalChanges(current, previous, next);
       commitMeta(updated);
     },
@@ -137,7 +139,7 @@ export function useDriveSync({ state, stateRef, applyExternalState, loaded }: Op
           return;
         }
         setHasRemote(check.exists);
-        const currentMeta = metaRef.current ?? createSyncMeta();
+        const currentMeta = migrateMeta(metaRef.current);
         const files = check.files ?? [];
         const toDownload = files.filter((file) => currentMeta.lastSeenRemote[file.id] !== file.modifiedTime);
         const payloads: CloudPayload[] = [];
@@ -198,6 +200,9 @@ export function useDriveSync({ state, stateRef, applyExternalState, loaded }: Op
         // Sem isso, um documento local sem versão poderia ser sobrescrito
         // silenciosamente por uma edição remota concorrente.
         baseMeta = seedMissingDocs(baseMeta, baseState);
+        // Conflitos legados adotados: o valor vencedor veio da nuvem e o
+        // materialize substitui o estado obsoleto — aplicar mesmo sem upload.
+        const hadAdopted = (baseMeta.adoptedDocs?.length ?? 0) > 0;
         const merged = mergePayloads(baseMeta, baseState, payloads);
         let nextMeta = merged.meta;
         let nextState = merged.state;
@@ -235,7 +240,7 @@ export function useDriveSync({ state, stateRef, applyExternalState, loaded }: Op
           lastError: undefined,
         };
         commitMeta(nextMeta);
-        if (merged.applied > 0 || payloads.length > 0) applyExternalState(nextState);
+        if (merged.applied > 0 || payloads.length > 0 || hadAdopted) applyExternalState(nextState);
         setLastSyncAt(nextMeta.lastSyncAt);
         setHasRemote(check.exists || Boolean(nextMeta.lastUploadHash));
         if (merged.conflicts > 0) {

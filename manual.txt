@@ -82,8 +82,9 @@ Center. A pasta de trabalho atual é "Horizonte de Cuidado".
   - Windows: OAuth Desktop com PKCE e loopback http://localhost, token em DPAPI.
   - Android: Google Sign-In nativo (GoogleSignIn + GoogleAuthUtil), token de
     acesso cifrado no Android Keystore. Sem WebView de login e sem navegador.
-- Sincronização: op-log por dispositivo, lamport, baseVersion, geração de
-  reinício, conflitos preservados para decisão do usuário, polling de 15 s.
+- Sincronização: op-log com histórico-união por dispositivo, lamport,
+  baseVersion, geração de reinício, mesclagem automática de conflitos com
+  tela manual só para caso raro, polling de 15 s.
 - Sem servidor próprio, sem analytics, sem anúncios.
 - Rust: o núcleo Rust exigido pela diretriz geral não foi implementado nesta
   máquina porque o toolchain Rust não está instalado. A lógica de negócio
@@ -275,6 +276,29 @@ git); os hashes estão na seção 15.
 - Respostas de erro incluem configured:true e signedIn:false quando o cliente
   existe mas o login foi cancelado/expirado; a UI não deve mostrar "não
   configurada" nesse caso.
+
+MESCLAGEM AUTOMÁTICA DE CONFLITOS (sync v2, portada do Caderno de Cuidado):
+- meta.ops é a UNIÃO de todas as operações já vistas (locais + remotas) e o
+  payload enviado (v2) carrega o histórico completo do dispositivo; assim o
+  ancestral comum de uma divergência está sempre disponível para mesclar.
+- recomputeOps reconstrói cabeças e conflitos de forma determinística: ordem
+  por contador lógico (version) e, no empate, por opId — nunca relógio.
+- Divergência com ancestral comum é mesclada campo a campo (amMerge): só um
+  lado mexeu → vale esse lado; os dois mexeram → Lamport maior vence, com
+  opId de desempate; exclusão vence edição (tombstone); itens com id (anotações,
+  tentativas de contato) são unidos. A resolução vira operação com resolves
+  [local, remoto] e o histórico continua completo.
+- Sem ancestral armazenado (conflitos da v1 migrados em 15/11/2026: 9 do
+  Windows + 18 do tablet), um lado vence inteiro pelo opId — regra
+  determinística: os dois aparelhos chegam ao mesmo vencedor. O lado vencedor
+  da nuvem é materializado no próximo sync (meta.adoptedDocs).
+- A tela de conflitos (Ajustes → Conflitos) fica para o caso raro em que a
+  mesclagem não é possível (valores escalares divergentes). parsePayload
+  aceita payload v1 de aparelho ainda não atualizado, mas o aparelho antigo
+  NÃO lê payload v2: atualizar todos os aparelhos juntos.
+- Custo conhecido: o histórico cresce com o uso (cada edição é uma op com o
+  documento inteiro). Sem poda nesta versão; compação futura por geração está
+  registrada como pendência.
 
 LOGIN ANDROID RESOLVIDO (versionCode 2):
 - Causa 1: o MainActivity usava android:launchMode="singleTask". Nesse modo o
